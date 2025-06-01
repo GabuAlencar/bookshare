@@ -9,6 +9,7 @@ import RecordsPage from '../pages/Cadastros/RecordsPage.jsx';
 import ClientFormPage from '../pages/Clients/ClientFormPage.jsx';
 import HistoryPage from '../pages/History/HistoryPage.jsx';
 import AboutPage from '../pages/About/AboutPage.jsx';
+import Dashboard from '../pages/Dashboard/Dashboard.jsx';
 
 const AppRoutes = () => (
     <Router>
@@ -22,6 +23,7 @@ const AppRoutes = () => (
             <Route path="/exibir-cadastros" element={<RecordsPage />} />
             <Route path="/historico" element={<HistoryPage />} />
             <Route path="/sobre" element={<AboutPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
     </Router>
 )
