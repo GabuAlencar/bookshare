@@ -28,6 +28,12 @@ const Book = sequelize.define('Book', {
 
   description: {
     type: DataTypes.TEXT,
+  },
+
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'pendente',
   }
 
 });
