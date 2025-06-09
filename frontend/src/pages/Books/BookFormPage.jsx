@@ -48,7 +48,7 @@ export default function BookFormPage() {
   return (
     <Layout>
       <div className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-md space-y-6 mt-8 border border-gray-200">
-        <h2 className="text-3xl font-bold text-blue-800 text-center mb-4">Cadastro de Livro</h2>
+        <h2 className="text-3xl font-bold text-blue-900 text-center mb-4">Cadastro de Livro</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -128,7 +128,7 @@ export default function BookFormPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold rounded transition"
+            className="w-full bg-blue-900 hover:bg-blue-700 text-white py-3 text-lg font-semibold rounded transition"
           >
             Cadastrar Livro
           </button>

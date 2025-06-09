@@ -6,8 +6,9 @@ export default function Layout({ children }) {
       <main className="flex-grow container mx-auto px-4 py-8">
         {children}
       </main>
-      <footer className="bg-gray-100 text-center py-4">
-        &copy; {new Date().getFullYear()} BookShare
+      <footer className="text-center py-4 flex justify-center items-center gap-2">
+        <span>&copy; {new Date().getFullYear()} BookShare</span>
+          <img src="/book-logo.svg" alt="Book logo" className="w-9 h-9" />
       </footer>
     </div>
   );

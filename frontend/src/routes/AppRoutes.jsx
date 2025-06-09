@@ -14,8 +14,8 @@ import Dashboard from '../pages/Dashboard/Dashboard.jsx';
 const AppRoutes = () => (
     <Router>
         <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/cadastro-livro" element={<BookFormPage/>} />
             <Route path="/cadastro-cliente" element={<ClientFormPage />} />
