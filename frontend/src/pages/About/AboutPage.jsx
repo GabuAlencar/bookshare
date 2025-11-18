@@ -17,9 +17,8 @@ export default function AboutPage() {
         <p className="text-md text-blue-900 mt-6 font-medium">Para mais informações, entre em contato com a nossa equipe:</p>
         
         <ul className="mt-2 text-gray-800">
-          <li className="mt-1">João – (12) 99120-7890</li>
-          <li className="mt-1">Gabriel – (12) 91234-5678</li>
-          <li className="mt-1">Isabelle – (12) 99876-5432</li>
+          <li className="mt-1">Gabriel Francisco Santos de Alencar </li>
+          <li className="mt-1">Kevin Ramon da Silva </li>
         </ul>
       </div>
     </Layout>
