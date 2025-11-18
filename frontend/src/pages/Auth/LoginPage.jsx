@@ -1,7 +1,6 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Mail, Lock } from "lucide-react"; // Instale lucide-react se necessário
+import { EnvelopeFill, LockFill, Book, ArrowRight, KeyFill } from "react-bootstrap-icons";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -40,63 +39,80 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-sm bg-white p-8 rounded-xl shadow-md">
-        <div className="flex flex-col items-center mb-6">
-          <img src="/book-logo.svg" alt="Bookshare" className="w-20 mb-2" />
-          <h1 className="text-xl font-semibold text-gray-800">Bookshare</h1>
-          <p className="text-sm text-gray-500 mt-1">Entre na sua conta</p>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-5">
+      <div className="glass-card p-5 w-100" style={{ maxWidth: "450px" }}>
+        <div className="text-center mb-4 fade-in">
+          <div className="mb-3">
+            <Book size={90} className="text-primary logo-pulse" />
+          </div>
+          <h1 className="fw-bold text-primary mb-2">BookShare</h1>
+          <p className="text-muted">Entre na sua conta</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="relative">
-            <input
-              type="email"
-              placeholder="alex@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Mail className="absolute right-3 top-2.5 text-gray-400" size={20} />
+        <form onSubmit={handleLogin} className="fade-in">
+          <div className="mb-3 position-relative">
+            <label className="form-label fw-semibold">E-mail</label>
+            <div className="position-relative">
+              <input
+                type="email"
+                className="form-control form-control-modern ps-5"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+            </div>
           </div>
 
-          <div className="relative">
-            <input
-              type="password"
-              placeholder="Entre com a sua senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Lock className="absolute right-3 top-2.5 text-gray-400" size={20} />
+          <div className="mb-4 position-relative">
+            <label className="form-label fw-semibold">Senha</label>
+            <div className="position-relative">
+              <input
+                type="password"
+                className="form-control form-control-modern ps-5"
+                placeholder="Digite sua senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <LockFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+            </div>
           </div>
 
-
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && (
+            <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">
+              <span>{error}</span>
+            </div>
+          )}
 
           <button
             type="submit"
-            className="w-full bg-blue-900 text-white py-2 rounded-md shadow-md hover:bg-blue-800 transition"
+            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3"
           >
-            Entrar
+            <span>Entrar</span>
+            <ArrowRight size={18} />
           </button>
 
-        </form>
+          <div className="text-center mb-3">
+            <Link 
+              to="/forgot-password" 
+              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2"
+            >
+              <KeyFill size={16} />
+              <span>Esqueci minha senha</span>
+            </Link>
+          </div>
 
-        <div className="text-sm text-center mt-6 text-gray-600 space-y-2">
-          <p>
-            Ainda não tem uma conta?{" "}
-            <Link to="/register" className="text-blue-600 underline">
-              Cadastre-se
-            </Link>
-          </p>
-          <p>
-            Esqueceu sua senha?{" "}
-            <Link to="/forgot-password" className="text-blue-600 underline">
-              Redefinir agora
-            </Link>
-          </p>
-        </div>
+          <div className="text-center">
+            <p className="text-muted mb-0">
+              Não tem uma conta?{" "}
+              <Link to="/register" className="text-primary fw-bold text-decoration-none">
+                Cadastre-se
+              </Link>
+            </p>
+          </div>
+        </form>
       </div>
     </div>
   );

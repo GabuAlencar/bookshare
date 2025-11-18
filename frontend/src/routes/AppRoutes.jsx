@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ScrollToTop from '../components/ScrollToTop.jsx';
 
 import HomePage from '../pages/Home/HomePage.jsx';
 import LoginPage from '../pages/Auth/LoginPage.jsx';
@@ -14,6 +15,7 @@ import Dashboard from '../pages/Dashboard/Dashboard.jsx';
 
 const AppRoutes = () => (
     <Router>
+        <ScrollToTop />
         <Routes>
             <Route path="/home" element={<HomePage />} />
             <Route path="/" element={<LoginPage />} />

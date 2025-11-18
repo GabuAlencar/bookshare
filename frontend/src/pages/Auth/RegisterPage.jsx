@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Mail, Lock, User } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { EnvelopeFill, KeyFill, Person, Book, ArrowRight, ArrowLeft } from "react-bootstrap-icons";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -23,7 +23,7 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        navigate("/"); // redireciona para login
+        navigate("/");
       } else {
         setError(data.error || "Erro no registro");
       }
@@ -33,64 +33,86 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-sm bg-white p-8 rounded-xl shadow-md">
-        <div className="flex flex-col items-center mb-6">
-          <img src="/book-logo.svg" alt="Bookshare" className="w-20 mb-2" />
-          <h1 className="text-xl font-semibold text-gray-800">Bookshare</h1>
-          <p className="text-sm text-gray-500 mt-1">Crie sua conta</p>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-5">
+      <div className="glass-card p-5 w-100" style={{ maxWidth: "450px" }}>
+        <div className="text-center mb-4 fade-in">
+          <div className="mb-3">
+            <Book size={90} className="text-primary logo-pulse" />
+          </div>
+          <h1 className="fw-bold text-primary mb-2">BookShare</h1>
+          <p className="text-muted">Crie sua conta</p>
         </div>
 
-        <form onSubmit={handleRegister} className="space-y-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Seu nome completo"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <User className="absolute right-3 top-2.5 text-gray-400" size={20} />
+        <form onSubmit={handleRegister} className="fade-in">
+          <div className="mb-3 position-relative">
+            <label className="form-label fw-semibold">Nome Completo</label>
+            <div className="position-relative">
+              <input
+                type="text"
+                className="form-control form-control-modern ps-5"
+                placeholder="Seu nome completo"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+              <Person className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+            </div>
           </div>
 
-          <div className="relative">
-            <input
-              type="email"
-              placeholder="seu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Mail className="absolute right-3 top-2.5 text-gray-400" size={20} />
+          <div className="mb-3 position-relative">
+            <label className="form-label fw-semibold">E-mail</label>
+            <div className="position-relative">
+              <input
+                type="email"
+                className="form-control form-control-modern ps-5"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+            </div>
           </div>
 
-          <div className="relative">
-            <input
-              type="password"
-              placeholder="Crie uma senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Lock className="absolute right-3 top-2.5 text-gray-400" size={20} />
+          <div className="mb-4 position-relative">
+            <label className="form-label fw-semibold">Senha</label>
+            <div className="position-relative">
+              <input
+                type="password"
+                className="form-control form-control-modern ps-5"
+                placeholder="Crie uma senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <KeyFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+            </div>
           </div>
 
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && (
+            <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">
+              <span>{error}</span>
+            </div>
+          )}
 
           <button
             type="submit"
-            className="w-full bg-blue-900 text-white py-2 rounded-md shadow-md hover:bg-blue-800 transition"
+            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3"
           >
-            Criar conta
+            <span>Criar conta</span>
+            <ArrowRight size={18} />
           </button>
-        </form>
 
-        <p className="text-sm text-center mt-4 text-gray-600">
-          Já tem uma conta?{" "}
-          <a href="/" className="text-blue-600 underline">
-            Entrar
-          </a>
-        </p>
+          <div className="text-center">
+            <Link 
+              to="/" 
+              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2"
+            >
+              <ArrowLeft size={16} />
+              <span>Já tem uma conta? Entrar</span>
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   );

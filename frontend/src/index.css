@@ -1,1 +1,261 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
 @import "tailwindcss";
+
+/* Gradiente global moderno */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  min-height: 100vh;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Cards com glassmorphism */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+}
+
+/* Botões modernos com hover */
+.btn-modern {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 12px 24px;
+}
+
+.btn-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Inputs modernos */
+.form-control-modern {
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+}
+
+.form-control-modern:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  transform: scale(1.02);
+}
+
+/* Navbar moderno */
+.navbar-modern {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+}
+
+/* Garantir que links do navbar fiquem visíveis sobre fundo claro */
+.navbar-modern .nav-link {
+  color: #333 !important;
+}
+
+/* Forçar exibição do colapso em desktop (caso alguma regra oculte) */
+@media (min-width: 992px) {
+  .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+  }
+}
+
+/* Mobile menu overlay styles */
+
+.mobile-menu-overlay {
+  position: fixed;
+  top: 56px; /* below navbar */
+  left: 0;
+  width: 320px; /* corner menu width */
+  height: calc(100vh - 56px);
+  background: #ffffff;
+  z-index: 1100;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  transform: translateX(-110%);
+  transition: transform 280ms ease;
+  border-radius: 0 0 8px 0;
+  overflow: auto;
+}
+
+.mobile-menu-overlay.open {
+  transform: translateX(0);
+}
+  
+
+.mobile-menu-overlay .mobile-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.mobile-menu-overlay .nav-link {
+  font-size: 1.05rem;
+  padding: 0.9rem 0.5rem;
+  color: #333 !important;
+  align-items: center;
+}
+
+.mobile-menu-overlay .navbar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mobile-logout {
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 700;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-logout svg {
+  position: absolute;
+  left: 16px;
+}
+
+.mobile-logout span {
+  margin: 0 auto;
+}
+
+
+/* Ensure the desktop brand icon matches login (slightly larger) */
+.navbar-brand svg { height: 28px; width: 28px; }
+
+/* Centered navbar links (desktop) */
+.navbar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  z-index: 1060;
+}
+
+.navbar-center .nav-link {
+  padding: 0.5rem 0.75rem;
+  color: #333 !important;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-center { display: none !important; }
+}
+
+/* Animações suaves */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ícone do sistema com pulso para destaque (usado na tela de login) */
+.logo-pulse {
+  animation: pulseScale 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes pulseScale {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.92;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Estilos para tabelas */
+.table-hover-row:hover {
+  background-color: rgba(102, 126, 234, 0.1) !important;
+  transform: scale(1.01);
+  transition: all 0.2s ease;
+}
+
+.table thead th {
+  border-bottom: 2px solid #667eea;
+  font-weight: 600;
+}
+
+/* Estilos para react-select */
+.react-select-container .react-select__control {
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  padding: 4px;
+  transition: all 0.3s ease;
+}
+
+.react-select-container .react-select__control:hover {
+  border-color: #667eea;
+}
+
+.react-select-container .react-select__control--is-focused {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.react-select-container .react-select__menu {
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Badges modernos */
+.badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* Animações de spin */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

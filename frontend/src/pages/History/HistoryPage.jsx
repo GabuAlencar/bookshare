@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
+import { 
+  Journal, 
+  People, 
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  FileText
+} from "react-bootstrap-icons";
 
 export default function HistoryPage() {
   const [books, setBooks] = useState([]);
@@ -29,105 +37,143 @@ export default function HistoryPage() {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto text-center">
-        <h1 className="text-3xl font-bold mb-6 text-blue-900">
-          Histórico de Cadastros
-        </h1>
+      <div className="fade-in">
+        <div className="text-center mb-5">
+          <h1 className="display-5 fw-bold text-white mb-3">
+            <FileText className="me-2" size={40} />
+            Histórico de Cadastros
+          </h1>
+          <p className="lead text-white-50">Visualize todos os livros e clientes cadastrados</p>
+        </div>
 
         {/* TABELA DE LIVROS */}
-        <h2 className="text-2xl font-semibold mb-4 text-left">Livros Cadastrados</h2>
-        <div className="overflow-x-auto rounded-lg shadow mb-12">
-          <table className="w-full table-auto border-collapse text-sm bg-white">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
-                <th className="border px-4 py-2">ID</th>
-                <th className="border px-4 py-2">Título</th>
-                <th className="border px-4 py-2">Autor</th>
-                <th className="border px-4 py-2">Ano</th>
-                <th className="border px-4 py-2">Categoria</th>
-                <th className="border px-4 py-2">Descrição</th>
-                <th className="border px-4 py-2">Data de Cadastro</th>
-              </tr>
-            </thead>
-            <tbody>
-              {books.length > 0 ? (
-                books.map((book) => (
-                  <tr key={book.id} className="hover:bg-gray-50">
-                    <td className="border px-4 py-2">{book.id}</td>
-                    <td className="border px-4 py-2">{book.title}</td>
-                    <td className="border px-4 py-2">{book.author}</td>
-                    <td className="border px-4 py-2">{book.year}</td>
-                    <td className="border px-4 py-2">{book.category}</td>
-                    <td className="border px-4 py-2 text-left max-w-xs">
-                      <p className="whitespace-pre-line break-words">
-                        {expandedDescriptions[book.id]
-                          ? book.description
-                          : book.description?.substring(0, 100) + (book.description?.length > 100 ? "..." : "")}
-                      </p>
-                      {book.description?.length > 100 && (
-                        <button
-                          onClick={() => toggleDescription(book.id)}
-                          className="text-blue-600 text-xs hover:underline mt-1"
-                        >
-                          {expandedDescriptions[book.id] ? "Mostrar menos" : "Ler mais"}
-                        </button>
-                      )}
-                    </td>
-                    <td className="border px-4 py-2">
-                      {new Date(book.createdAt).toLocaleDateString("pt-BR")}
+        <div className="glass-card p-4 mb-5">
+          <div className="d-flex align-items-center gap-2 mb-4">
+            <Journal className="text-primary" size={28} />
+            <h2 className="fw-bold text-primary mb-0">Livros Cadastrados</h2>
+            <span className="badge bg-primary ms-2">{books.length}</span>
+          </div>
+          
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead className="table-primary">
+                <tr>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Autor</th>
+                  <th>Ano</th>
+                  <th>Categoria</th>
+                  <th>Descrição</th>
+                  <th>Data de Cadastro</th>
+                </tr>
+              </thead>
+              <tbody>
+                {books.length > 0 ? (
+                  books.map((book) => (
+                    <tr key={book.id} className="table-hover-row">
+                      <td><strong>#{book.id}</strong></td>
+                      <td>{book.title}</td>
+                      <td>{book.author}</td>
+                      <td>{book.year}</td>
+                      <td>
+                        <span className="badge bg-info">{book.category}</span>
+                      </td>
+                      <td style={{ maxWidth: "300px" }}>
+                        <p className="mb-1">
+                          {expandedDescriptions[book.id]
+                            ? book.description
+                            : book.description?.substring(0, 100) + (book.description?.length > 100 ? "..." : "")}
+                        </p>
+                        {book.description?.length > 100 && (
+                          <button
+                            onClick={() => toggleDescription(book.id)}
+                            className="btn btn-sm btn-link text-primary p-0 d-inline-flex align-items-center gap-1"
+                          >
+                            {expandedDescriptions[book.id] ? (
+                              <>
+                                <ChevronUp size={14} />
+                                <span>Mostrar menos</span>
+                              </>
+                            ) : (
+                              <>
+                                <ChevronDown size={14} />
+                                <span>Ler mais</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center gap-1">
+                          <Calendar size={14} className="text-muted" />
+                          <span>{new Date(book.createdAt).toLocaleDateString("pt-BR")}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="text-center py-5 text-muted">
+                      <Journal size={40} className="mb-2 opacity-50" />
+                      <p className="mb-0">Nenhum livro encontrado.</p>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="text-center py-4 text-gray-500">
-                    Nenhum livro encontrado.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* TABELA DE CLIENTES */}
-        <h2 className="text-2xl font-semibold mb-4 text-left">Clientes Cadastrados</h2>
-        <div className="overflow-x-auto rounded-lg shadow">
-          <table className="w-full table-auto border-collapse text-sm bg-white">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
-                <th className="border px-4 py-2">ID</th>
-                <th className="border px-4 py-2">Nome</th>
-                <th className="border px-4 py-2">Email</th>
-                <th className="border px-4 py-2">Telefone</th>
-                <th className="border px-4 py-2">CPF</th>
-                <th className="border px-4 py-2">Endereço</th>
-                <th className="border px-4 py-2">Data de Cadastro</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clients.length > 0 ? (
-                clients.map((client) => (
-                  <tr key={client.id} className="hover:bg-gray-50">
-                    <td className="border px-4 py-2">{client.id}</td>
-                    <td className="border px-4 py-2">{client.name}</td>
-                    <td className="border px-4 py-2">{client.email}</td>
-                    <td className="border px-4 py-2">{client.phone}</td>
-                    <td className="border px-4 py-2">{client.cpf}</td>
-                    <td className="border px-4 py-2">{client.address}</td>
-                    <td className="border px-4 py-2">
-                      {new Date(client.createdAt).toLocaleDateString("pt-BR")}
+        <div className="glass-card p-4">
+          <div className="d-flex align-items-center gap-2 mb-4">
+            <People className="text-success" size={28} />
+            <h2 className="fw-bold text-success mb-0">Clientes Cadastrados</h2>
+            <span className="badge bg-success ms-2">{clients.length}</span>
+          </div>
+          
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead className="table-success">
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Telefone</th>
+                  <th>CPF</th>
+                  <th>Endereço</th>
+                  <th>Data de Cadastro</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clients.length > 0 ? (
+                  clients.map((client) => (
+                    <tr key={client.id} className="table-hover-row">
+                      <td><strong>#{client.id}</strong></td>
+                      <td>{client.name}</td>
+                      <td>{client.email}</td>
+                      <td>{client.phone}</td>
+                      <td>{client.cpf}</td>
+                      <td>{client.address}</td>
+                      <td>
+                        <div className="d-flex align-items-center gap-1">
+                          <Calendar size={14} className="text-muted" />
+                          <span>{new Date(client.createdAt).toLocaleDateString("pt-BR")}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="text-center py-5 text-muted">
+                      <People size={40} className="mb-2 opacity-50" />
+                      <p className="mb-0">Nenhum cliente encontrado.</p>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="text-center py-4 text-gray-500">
-                    Nenhum cliente encontrado.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </Layout>
