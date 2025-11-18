@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock } from "lucide-react"; // Instale lucide-react se necessário
 
 export default function LoginPage() {
@@ -81,16 +81,22 @@ export default function LoginPage() {
             Entrar
           </button>
 
-      {/*
-        <p className="text-sm text-center mt-4 text-gray-600"> 
-          Caso não tenha uma conta{" "} 
-          <a href="/register" className="text-blue-600 underline">
-            Registre-se
-          </a>
-        </p> 
-      */} 
-
         </form>
+
+        <div className="text-sm text-center mt-6 text-gray-600 space-y-2">
+          <p>
+            Ainda não tem uma conta?{" "}
+            <Link to="/register" className="text-blue-600 underline">
+              Cadastre-se
+            </Link>
+          </p>
+          <p>
+            Esqueceu sua senha?{" "}
+            <Link to="/forgot-password" className="text-blue-600 underline">
+              Redefinir agora
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
