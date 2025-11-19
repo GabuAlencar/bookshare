@@ -155,8 +155,46 @@ export default function HistoryPage() {
                   books.map((book) => (
                     <tr key={book.id} className={getRowClassName(book.statusEmprestimo)}>
                       <td><strong>#{book.id}</strong></td>
-                      <td>{book.title}</td>
-                      <td>{book.author}</td>
+                      <td className="text-truncate-cell" style={{ maxWidth: "200px", width: "200px" }}>
+                        <div style={{ 
+                          overflow: "hidden", 
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          maxWidth: "200px"
+                        }}>
+                          {book.title || "-"}
+                        </div>
+                        {book.title && book.title.length > 50 && (
+                          <button
+                            onClick={() => handleViewBook(book)}
+                            className="btn btn-sm btn-link text-primary p-0 mt-1 d-inline-flex align-items-center gap-1"
+                            style={{ fontSize: "0.875rem" }}
+                          >
+                            <ChevronDown size={14} />
+                            <span>Ler mais</span>
+                          </button>
+                        )}
+                      </td>
+                      <td className="text-truncate-cell" style={{ maxWidth: "200px", width: "200px" }}>
+                        <div style={{ 
+                          overflow: "hidden", 
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          maxWidth: "200px"
+                        }}>
+                          {book.author || "-"}
+                        </div>
+                        {book.author && book.author.length > 50 && (
+                          <button
+                            onClick={() => handleViewBook(book)}
+                            className="btn btn-sm btn-link text-primary p-0 mt-1 d-inline-flex align-items-center gap-1"
+                            style={{ fontSize: "0.875rem" }}
+                          >
+                            <ChevronDown size={14} />
+                            <span>Ler mais</span>
+                          </button>
+                        )}
+                      </td>
                       <td>{book.year}</td>
                       <td>
                         <span className="badge bg-info">{book.category}</span>
@@ -191,7 +229,7 @@ export default function HistoryPage() {
                         </div>
                       </td>
                       <td>
-                        <div className="d-flex gap-2 flex-wrap">
+                        <div className="d-flex gap-2" style={{ flexWrap: "nowrap" }}>
                           <button
                             className="btn btn-sm btn-primary d-flex align-items-center gap-1"
                             onClick={() => handleViewBook(book)}
