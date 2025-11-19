@@ -58,7 +58,17 @@ export default function AboutPage() {
           <p className="text-muted">
             Desenvolvido com as melhores tecnologias para oferecer uma experiência 
             rápida, segura e agradável.
-          </p>
+            </p>
+            <p>
+              Desenvolvido por: 
+            </p>
+            <p>
+             Kevin Ramon da Silva
+            </p>
+            <p>
+              Gabriel Francisco Santos de Alencar
+            </p>
+          
         </div>
 
         <div className="row g-4 mb-5">

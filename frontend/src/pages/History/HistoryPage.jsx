@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { 
   Journal, 
@@ -10,10 +11,12 @@ import {
   CheckCircleFill,
   XCircleFill,
   ClockFill,
-  TrashFill
+  TrashFill,
+  PencilFill
 } from "react-bootstrap-icons";
 
 export default function HistoryPage() {
+  const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [clients, setClients] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
@@ -22,6 +25,58 @@ export default function HistoryPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [deleteType, setDeleteType] = useState(null); // 'book' ou 'client'
+  const [activeTab, setActiveTab] = useState(() => {
+    // Carrega do localStorage ou usa 'clientes' como padrão
+    return localStorage.getItem('historyActiveTab') || 'clientes';
+  });
+
+  // Salva a aba ativa no localStorage quando muda
+  useEffect(() => {
+    localStorage.setItem('historyActiveTab', activeTab);
+  }, [activeTab]);
+
+  // Manter barra de rolagem visível quando mouse estiver sobre as tabelas
+  useEffect(() => {
+    const handleTableAreaMouseEnter = (e) => {
+      const tableResponsive = e.currentTarget.closest('.glass-card')?.querySelector('.table-responsive');
+      if (tableResponsive) {
+        tableResponsive.classList.add('keep-scrollbar');
+        tableResponsive.style.overflowX = 'scroll';
+      }
+    };
+
+    const handleTableAreaMouseLeave = (e) => {
+      const glassCard = e.currentTarget.closest('.glass-card');
+      const tableResponsive = glassCard?.querySelector('.table-responsive');
+      
+      // Só remove se o mouse realmente saiu do card
+      if (tableResponsive && !glassCard.contains(e.relatedTarget)) {
+        tableResponsive.classList.remove('keep-scrollbar');
+        tableResponsive.style.overflowX = 'auto';
+      }
+    };
+
+    // Aguardar um pouco para garantir que os elementos foram renderizados
+    const timeoutId = setTimeout(() => {
+      const glassCards = document.querySelectorAll('.glass-card');
+      glassCards.forEach(card => {
+        const tableArea = card.querySelector('.table-responsive, .table, tbody, tr, td, th');
+        if (tableArea) {
+          card.addEventListener('mouseenter', handleTableAreaMouseEnter);
+          card.addEventListener('mouseleave', handleTableAreaMouseLeave);
+        }
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      const glassCards = document.querySelectorAll('.glass-card');
+      glassCards.forEach(card => {
+        card.removeEventListener('mouseenter', handleTableAreaMouseEnter);
+        card.removeEventListener('mouseleave', handleTableAreaMouseLeave);
+      });
+    };
+  }, [activeTab, books, clients]);
 
   useEffect(() => {
     fetch("http://localhost:5000/books")
@@ -127,13 +182,40 @@ export default function HistoryPage() {
           <p className="lead text-white-50">Visualize todos os livros e clientes cadastrados</p>
         </div>
 
-        {/* TABELA DE LIVROS */}
-        <div className="glass-card p-4 mb-5">
-          <div className="d-flex align-items-center gap-2 mb-4">
-            <Journal className="text-primary" size={28} />
-            <h2 className="fw-bold text-primary mb-0">Livros Cadastrados</h2>
-            <span className="badge bg-primary ms-2">{books.length}</span>
+        {/* SEÇÃO UNIFICADA COM ABAS */}
+        <div className="glass-card p-4">
+          {/* Botões de Navegação */}
+          <div className="d-flex gap-3 mb-4 flex-wrap">
+            <button
+              className={`btn btn-modern d-flex align-items-center gap-2 ${
+                activeTab === 'livros' ? 'btn-primary' : 'btn-outline-primary'
+              }`}
+              onClick={() => setActiveTab('livros')}
+            >
+              <Journal size={20} />
+              <span>Livros</span>
+              <span className="badge bg-white text-primary ms-1">{books.length}</span>
+            </button>
+            <button
+              className={`btn btn-modern d-flex align-items-center gap-2 ${
+                activeTab === 'clientes' ? 'btn-success' : 'btn-outline-success'
+              }`}
+              onClick={() => setActiveTab('clientes')}
+            >
+              <People size={20} />
+              <span>Clientes</span>
+              <span className="badge bg-white text-success ms-1">{clients.length}</span>
+            </button>
           </div>
+
+          {/* TABELA DE LIVROS */}
+          {activeTab === 'livros' && (
+            <>
+              <div className="d-flex align-items-center gap-2 mb-4">
+                <Journal className="text-primary" size={28} />
+                <h2 className="fw-bold text-primary mb-0">Livros Cadastrados</h2>
+                <span className="badge bg-primary ms-2">{books.length}</span>
+              </div>
           
           <div className="table-responsive">
             <table className="table table-hover align-middle">
@@ -259,15 +341,17 @@ export default function HistoryPage() {
               </tbody>
             </table>
           </div>
-        </div>
+          </>
+          )}
 
-        {/* TABELA DE CLIENTES */}
-        <div className="glass-card p-4">
-          <div className="d-flex align-items-center gap-2 mb-4">
-            <People className="text-success" size={28} />
-            <h2 className="fw-bold text-success mb-0">Clientes Cadastrados</h2>
-            <span className="badge bg-success ms-2">{clients.length}</span>
-          </div>
+          {/* TABELA DE CLIENTES */}
+          {activeTab === 'clientes' && (
+            <>
+              <div className="d-flex align-items-center gap-2 mb-4">
+                <People className="text-success" size={28} />
+                <h2 className="fw-bold text-success mb-0">Clientes Cadastrados</h2>
+                <span className="badge bg-success ms-2">{clients.length}</span>
+              </div>
           
           <div className="table-responsive">
             <table className="table table-hover align-middle">
@@ -292,7 +376,14 @@ export default function HistoryPage() {
                       <td>{client.email}</td>
                       <td>{client.phone}</td>
                       <td>{client.cpf}</td>
-                      <td>{client.address}</td>
+                      <td style={{ 
+                        maxWidth: "200px", 
+                        wordWrap: "break-word", 
+                        overflowWrap: "break-word",
+                        whiteSpace: "normal"
+                      }}>
+                        {client.address}
+                      </td>
                       <td>
                         <div className="d-flex align-items-center gap-1">
                           <Calendar size={14} className="text-muted" />
@@ -321,6 +412,8 @@ export default function HistoryPage() {
               </tbody>
             </table>
           </div>
+          </>
+          )}
         </div>
       </div>
 
@@ -487,6 +580,17 @@ export default function HistoryPage() {
                 </div>
               </div>
                 <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-primary d-flex align-items-center gap-2"
+                    onClick={() => {
+                      setShowModal(false);
+                      navigate(`/cadastro-livro?edit=${selectedBook.id}`);
+                    }}
+                  >
+                    <PencilFill size={18} />
+                    <span>Editar</span>
+                  </button>
                   <button
                     type="button"
                     className="btn btn-secondary w-100 w-md-auto"

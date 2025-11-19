@@ -37,7 +37,9 @@ router.post('/books', async (req, res) => {
 // GET: Listar todos os livros com status de empréstimo
 router.get('/books', async (req, res) => {
   try {
-    const books = await Book.findAll();
+    const books = await Book.findAll({
+      order: [['createdAt', 'DESC']], // Mais recente primeiro
+    });
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -81,6 +83,13 @@ router.get('/books', async (req, res) => {
       };
     });
 
+    // Garantir ordenação por data de cadastro (mais recente primeiro)
+    booksWithStatus.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return dateB - dateA; // Ordem decrescente
+    });
+
     res.status(200).json(booksWithStatus);
   } catch (error) {
     console.error(error);
@@ -101,6 +110,34 @@ router.get('/books/next-id', async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar próximo ID:', error);
     return res.status(500).json({ error: 'Erro ao buscar próximo ID' });
+  }
+});
+
+// PUT: Atualizar um livro
+router.put('/books/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, author, year, category, description } = req.body;
+
+    // Verificar se o livro existe
+    const book = await Book.findByPk(id);
+    if (!book) {
+      return res.status(404).json({ error: 'Livro não encontrado' });
+    }
+
+    // Atualizar o livro
+    await book.update({
+      title,
+      author,
+      year,
+      category,
+      description,
+    });
+
+    return res.status(200).json({ message: 'Livro atualizado com sucesso', book });
+  } catch (error) {
+    console.error('Erro ao atualizar livro:', error);
+    return res.status(500).json({ error: 'Erro ao atualizar livro' });
   }
 });
 

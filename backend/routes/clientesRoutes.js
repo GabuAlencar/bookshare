@@ -24,7 +24,9 @@ router.post('/clients', async (req, res) => {
 
 router.get('/clients', async (req, res) => {
   try {
-    const clients = await Client.findAll();
+    const clients = await Client.findAll({
+      order: [['createdAt', 'DESC']], // Mais recente primeiro
+    });
     res.status(200).json(clients);
   } catch (error) {
     console.error(error);
@@ -47,7 +49,9 @@ router.post('/clients', async (req, res) => {
 // Rota para listar todos os clientes (já existente)
 router.get('/clients', async (req, res) => {
   try {
-    const clients = await Client.findAll();
+    const clients = await Client.findAll({
+      order: [['createdAt', 'DESC']], // Mais recente primeiro
+    });
     return res.status(200).json(clients);
   } catch (error) {
     console.error(error);

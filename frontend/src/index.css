@@ -362,3 +362,56 @@ body {
   width: 200px !important;
   overflow: hidden;
 }
+
+/* Manter barra de rolagem visível quando mouse estiver sobre as tabelas */
+.table-responsive {
+  overflow-x: auto;
+  overflow-y: visible;
+  position: relative;
+}
+
+/* Classe para manter scrollbar sempre visível */
+.table-responsive.keep-scrollbar {
+  overflow-x: scroll !important;
+  -ms-overflow-style: scrollbar !important; /* IE e Edge */
+  scrollbar-width: thin !important; /* Firefox */
+}
+
+/* Sempre mostrar barra de rolagem quando mouse estiver sobre o card que contém a tabela */
+.glass-card:hover .table-responsive {
+  overflow-x: scroll !important;
+  -ms-overflow-style: scrollbar !important; /* IE e Edge */
+  scrollbar-width: thin !important; /* Firefox */
+}
+
+/* Manter scrollbar visível também quando hover na própria área de scroll */
+.table-responsive:hover {
+  overflow-x: scroll !important;
+  -ms-overflow-style: scrollbar !important;
+  scrollbar-width: thin !important;
+}
+
+/* Forçar barra de rolagem sempre visível em navegadores baseados em WebKit (Chrome, Edge) */
+.table-responsive::-webkit-scrollbar {
+  height: 12px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Para Firefox */
+.table-responsive {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}

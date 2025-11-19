@@ -7,7 +7,6 @@ import {
   JournalBookmark, 
   ClockHistory, 
   Info, 
-  
   BoxArrowRight,
   List,
   X,
@@ -29,6 +28,18 @@ export default function Navbar() {
   const name = localStorage.getItem("name");
 
   const showBack = location.pathname !== "/home" && location.pathname !== "/";
+  
+  // Verificar se está editando livro (tem query param 'edit' na URL)
+  const searchParams = new URLSearchParams(location.search);
+  const isEditingBook = location.pathname === "/cadastro-livro" && searchParams.get('edit');
+  
+  const handleBackClick = () => {
+    if (isEditingBook) {
+      navigate('/historico');
+    } else {
+      navigate('/home');
+    }
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-modern fixed-top">
@@ -36,8 +47,8 @@ export default function Navbar() {
         {showBack && (
           <button
             className="btn btn-outline-secondary me-2 d-flex align-items-center"
-            onClick={() => navigate('/home')}
-            aria-label="Voltar para a página principal"
+            onClick={handleBackClick}
+            aria-label={isEditingBook ? "Voltar para o histórico" : "Voltar para a página principal"}
           >
             <ArrowLeft size={20} />
             <span className="ms-2 d-none d-md-inline">Voltar</span>

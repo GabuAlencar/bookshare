@@ -1,5 +1,6 @@
 import Layout from "../../components/Layout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { 
   Journal, 
@@ -14,6 +15,10 @@ import {
 } from "react-bootstrap-icons";
 
 export default function BookFormPage() {
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
+  const isEditing = !!editId;
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [year, setYear] = useState("");
@@ -22,6 +27,32 @@ export default function BookFormPage() {
   const [bookId, setBookId] = useState(null);
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Carregar dados do livro se estiver editando
+  useEffect(() => {
+    if (editId) {
+      setIsLoading(true);
+      axios.get(`http://localhost:5000/books`)
+        .then(res => {
+          const book = res.data.find(b => b.id === parseInt(editId));
+          if (book) {
+            setTitle(book.title || "");
+            setAuthor(book.author || "");
+            setYear(book.year || "");
+            setCategory(book.category || "");
+            setDescription(book.description || "");
+            setBookId(book.id);
+          }
+        })
+        .catch(err => {
+          console.error("Erro ao carregar livro:", err);
+          setMessage("Erro ao carregar dados do livro.");
+          setIsSuccess(false);
+        })
+        .finally(() => setIsLoading(false));
+    }
+  }, [editId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,25 +67,40 @@ export default function BookFormPage() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/books", {
-        title,
-        author,
-        year,
-        category,
-        description,
-      });
+      if (isEditing && editId) {
+        // Atualizar livro existente
+        await axios.put(`http://localhost:5000/books/${editId}`, {
+          title,
+          author,
+          year,
+          category,
+          description,
+        });
 
-      setBookId(response.data.id);
-      setMessage("Livro cadastrado com sucesso!");
-      setIsSuccess(true);
+        setMessage("Livro atualizado com sucesso!");
+        setIsSuccess(true);
+      } else {
+        // Criar novo livro
+        const response = await axios.post("http://localhost:5000/books", {
+          title,
+          author,
+          year,
+          category,
+          description,
+        });
 
-      setTitle("");
-      setAuthor("");
-      setYear("");
-      setCategory("");
-      setDescription("");
+        setBookId(response.data.id);
+        setMessage("Livro cadastrado com sucesso!");
+        setIsSuccess(true);
+
+        setTitle("");
+        setAuthor("");
+        setYear("");
+        setCategory("");
+        setDescription("");
+      }
     } catch (err) {
-      setMessage("Erro ao cadastrar livro.");
+      setMessage(isEditing ? "Erro ao atualizar livro." : "Erro ao cadastrar livro.");
       setIsSuccess(false);
       console.error(err);
     }
@@ -69,23 +115,47 @@ export default function BookFormPage() {
               <div className="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
                 <Journal size={40} className="text-primary" />
               </div>
-              <h2 className="fw-bold text-primary mb-2">Cadastro de Livro</h2>
-              <p className="text-muted">Preencha os dados do livro</p>
+              <h2 className="fw-bold text-primary mb-2">{isEditing ? "Editar Livro" : "Cadastro de Livro"}</h2>
+              <p className="text-muted">{isEditing ? "Atualize os dados do livro" : "Preencha os dados do livro"}</p>
             </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label fw-semibold d-flex align-items-center gap-2">
-                  <FileText size={18} />
-                  Código do Livro
-                </label>
-                <input
-                  type="text"
-                  className="form-control form-control-modern bg-light"
-                  value={bookId ? `#${String(bookId).padStart(6, "0")}` : "Aguardando cadastro..."}
-                  disabled
-                />
+            {isLoading ? (
+              <div className="text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Carregando...</span>
+                </div>
+                <p className="mt-3 text-muted">Carregando dados do livro...</p>
               </div>
+            ) : (
+            <form onSubmit={handleSubmit}>
+              {isEditing && (
+                <div className="mb-3">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                    <FileText size={18} />
+                    Código do Livro
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-modern bg-light"
+                    value={bookId ? `#${String(bookId).padStart(6, "0")}` : ""}
+                    disabled
+                  />
+                </div>
+              )}
+              {!isEditing && (
+                <div className="mb-3">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                    <FileText size={18} />
+                    Código do Livro
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-modern bg-light"
+                    value={bookId ? `#${String(bookId).padStart(6, "0")}` : "Aguardando cadastro..."}
+                    disabled
+                  />
+                </div>
+              )}
 
               <div className="row g-3">
                 <div className="col-12 col-md-6">
@@ -183,9 +253,10 @@ export default function BookFormPage() {
                 className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2"
               >
                 <Save size={18} />
-                <span>Cadastrar Livro</span>
+                <span>{isEditing ? "Atualizar Livro" : "Cadastrar Livro"}</span>
               </button>
             </form>
+            )}
           </div>
         </div>
       </div>
