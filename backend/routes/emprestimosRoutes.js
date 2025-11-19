@@ -126,4 +126,42 @@ router.get('/borrow/ativos/:id_usuario', async (req, res) => {
   }
 });
 
+// GET: Buscar histórico de empréstimos de um livro específico
+router.get('/borrow/livro/:id_livro', async (req, res) => {
+  try {
+    const { id_livro } = req.params;
+
+    const emprestimos = await Borrow.findAll({
+      where: {
+        id_livro,
+      },
+      include: [
+        {
+          model: Client,
+          attributes: ['id', 'name', 'email'],
+        },
+      ],
+      order: [['data_solicitacao', 'DESC']],
+    });
+
+    const historico = emprestimos.map(e => ({
+      id_emprestimo: e.id_emprestimo,
+      cliente: e.Client ? {
+        id: e.Client.id,
+        nome: e.Client.name,
+        email: e.Client.email,
+      } : null,
+      data_solicitacao: e.data_solicitacao,
+      data_aprovacao: e.data_aprovacao,
+      data_prevista_devolucao: e.data_prevista_devolucao,
+      status: e.status,
+    }));
+
+    return res.status(200).json(historico);
+  } catch (error) {
+    console.error("Erro ao buscar histórico do livro:", error);
+    return res.status(500).json({ error: 'Erro ao buscar histórico do livro' });
+  }
+});
+
 module.exports = router;

@@ -90,12 +90,29 @@ export default function BorrowBookPage() {
 
       setMensagemDevolucao("Livro devolvido com sucesso!");
       setMensagemDevolucaoErro(false);
-      setIdUsuarioDev("");
+      
+      // Limpar seleções
       setIdLivroDev("");
-      setLivrosEmprestados([]);
-
+      
+      // Atualizar listas
       const livrosAtualizados = await axios.get("http://localhost:5000/books");
       setLivros(livrosAtualizados.data);
+      
+      // Atualizar livros emprestados do cliente se ainda houver cliente selecionado
+      if (id_usuario_dev) {
+        try {
+          const res = await axios.get(`http://localhost:5000/borrow/ativos/${id_usuario_dev}`);
+          if (res.data.length === 0) {
+            setLivrosEmprestados([]);
+          } else {
+            setLivrosEmprestados(res.data.map(l => ({ value: l.id_livro, label: l.titulo_livro })));
+          }
+        } catch {
+          setLivrosEmprestados([]);
+        }
+      } else {
+        setLivrosEmprestados([]);
+      }
     } catch (err) {
       setMensagemDevolucao(err.response?.data?.error || "Erro ao devolver o livro.");
       setMensagemDevolucaoErro(true);
@@ -288,8 +305,8 @@ export default function BorrowBookPage() {
                 </div>
 
                 {mensagemDevolucao && (
-                  <div className={`alert ${mensagemDevolucaoErro ? 'alert-danger' : 'alert-primary'} d-flex align-items-center gap-2 mb-4`}>
-                    {mensagemDevolucaoErro ? <XCircle size={20} /> : <CheckCircle size={20} />}
+                  <div className={`alert ${mensagemDevolucaoErro ? 'alert-danger' : 'alert-success'} d-flex align-items-center gap-2 mb-4`}>
+                    {mensagemDevolucaoErro ? <XCircleFill size={20} /> : <CheckCircleFill size={20} />}
                     <span>{mensagemDevolucao}</span>
                   </div>
                 )}

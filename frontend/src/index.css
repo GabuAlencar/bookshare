@@ -259,3 +259,106 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* Linha de livro com atraso */
+.table-warning {
+  background-color: rgba(255, 193, 7, 0.3) !important;
+}
+
+.table-warning:hover {
+  background-color: rgba(255, 193, 7, 0.4) !important;
+}
+
+/* Modal moderno */
+.modal-content {
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  border-bottom: 2px solid #e0e0e0;
+  border-radius: 20px 20px 0 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+.modal-footer {
+  border-top: 2px solid #e0e0e0;
+  border-radius: 0 0 20px 20px;
+}
+
+/* Modal responsivo para mobile */
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  .modal-content {
+    border-radius: 15px;
+  }
+  
+  .modal-header {
+    border-radius: 15px 15px 0 0;
+    padding: 1rem;
+  }
+  
+  .modal-header .modal-title {
+    font-size: 1rem;
+  }
+  
+  .modal-header .modal-title svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .modal-body h6 {
+    font-size: 1rem;
+  }
+  
+  .modal-footer {
+    border-radius: 0 0 15px 15px;
+    padding: 0.75rem;
+  }
+  
+  .modal-body p {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  
+  .modal-body .table {
+    font-size: 0.8rem;
+  }
+  
+  .modal-body .table th,
+  .modal-body .table td {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .modal-body .badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* Coluna de descrição na tabela */
+.table td {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Limitar largura da coluna de descrição */
+.table td.text-truncate-cell {
+  max-width: 200px !important;
+  width: 200px !important;
+  overflow: hidden;
+}
