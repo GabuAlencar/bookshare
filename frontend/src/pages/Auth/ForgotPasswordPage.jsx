@@ -41,18 +41,17 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-5">
-      <div className="glass-card p-5 w-100" style={{ maxWidth: "450px" }}>
+      <div className="glass-card p-5 w-100 border-0 shadow-lg" style={{ maxWidth: "450px" }}>
         <div className="text-center mb-4 fade-in">
-          <div className="mb-3">
-            <KeyFill size={60} className="text-primary" />
+          <div className="mb-4">
+            <img src="/logo.png" alt="BookShare Logotipo" style={{ maxWidth: '100%', height: 'auto', maxHeight: '95px' }} className="d-block mx-auto mb-2" onError={(e) => { e.target.onerror = null; e.target.outerHTML = '<h1 class="fw-bold text-dark mb-2">Redefinir Senha</h1>'; }} />
           </div>
-          <h1 className="fw-bold text-primary mb-2">Redefinir Senha</h1>
-          <p className="text-muted">Digite seu e-mail e a nova senha</p>
+          <p className="text-secondary">Recuperação de Acesso Institucional</p>
         </div>
 
         <form onSubmit={handleSubmit} className="fade-in">
           <div className="mb-3 position-relative">
-            <label className="form-label fw-semibold">E-mail</label>
+            <label className="form-label fw-semibold text-secondary small text-uppercase">E-mail Corporativo</label>
             <div className="position-relative">
               <input
                 type="email"
@@ -62,12 +61,12 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
             </div>
           </div>
 
           <div className="mb-4 position-relative">
-            <label className="form-label fw-semibold">Nova Senha</label>
+            <label className="form-label fw-semibold text-secondary small text-uppercase">Nova Senha</label>
             <div className="position-relative">
               <input
                 type="password"
@@ -77,37 +76,37 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
               />
-              <KeyFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+              <KeyFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
             </div>
           </div>
 
           {error && (
-            <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">
-              <span>{error}</span>
+            <div className="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+              <span className="small fw-semibold">{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="alert alert-success d-flex align-items-center gap-2" role="alert">
-              <span>{success}</span>
+            <div className="alert alert-success d-flex align-items-center gap-2 py-2" role="alert">
+              <span className="small fw-semibold">{success}</span>
             </div>
           )}
 
           <button
             type="submit"
-            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3"
+            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3 shadow-sm"
           >
-            <span>Redefinir Senha</span>
+            <span>Confirmar Redefinição</span>
             <ArrowRight size={18} />
           </button>
 
-          <div className="text-center">
+          <div className="text-center border-top pt-3 mt-2">
             <Link 
               to="/" 
-              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2"
+              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2 small"
             >
               <ArrowLeft size={16} />
-              <span>Voltar ao login</span>
+              <span>Retornar ao Acesso</span>
             </Link>
           </div>
         </form>

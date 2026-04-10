@@ -53,9 +53,9 @@ export default function Dashboard() {
                 )}
               </div>
               
-              <h1 className="fw-bold text-primary mb-4">
-                <ShieldCheck className="me-2" size={32} />
-                Dashboard
+              <h1 className="fw-bold text-dark mb-4 border-bottom pb-3">
+                <ShieldCheck className="me-2 text-primary" size={32} />
+                Dashboard Institucional
               </h1>
               
               {loading ? (

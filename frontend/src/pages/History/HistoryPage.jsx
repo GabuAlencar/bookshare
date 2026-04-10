@@ -175,11 +175,11 @@ export default function HistoryPage() {
     <Layout>
       <div className="fade-in">
         <div className="text-center mb-5">
-          <h1 className="display-5 fw-bold text-white mb-3">
-            <FileText className="me-2" size={40} />
+          <h1 className="display-5 fw-bold text-dark mb-3">
+            <FileText className="me-2 text-primary bg-white rounded-circle p-1 shadow-sm" size={48} />
             Histórico de Cadastros
           </h1>
-          <p className="lead text-white-50">Visualize todos os livros e clientes cadastrados</p>
+          <p className="lead text-secondary">Visualize todos os livros e clientes cadastrados</p>
         </div>
 
         {/* SEÇÃO UNIFICADA COM ABAS */}

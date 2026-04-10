@@ -149,11 +149,11 @@ export default function BorrowBookPage() {
         <div className="col-12 col-lg-8">
           <div className="glass-card p-4 p-md-5">
             <div className="text-center mb-4">
-              <div className="bg-info bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
-                <JournalBookmark size={40} className="text-info" />
+              <div className="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                <JournalBookmark size={40} className="text-primary" />
               </div>
-              <h2 className="fw-bold text-info mb-2">Gestão de Empréstimos</h2>
-              <p className="text-muted">Gerencie empréstimos e devoluções</p>
+              <h2 className="fw-bold text-dark mb-2">Gestão de Empréstimos</h2>
+              <p className="text-secondary">Gerencie empréstimos e devoluções</p>
             </div>
 
             {!acaoSelecionada && (
@@ -161,14 +161,14 @@ export default function BorrowBookPage() {
                 <p className="fs-5 text-muted mb-4">Escolha uma ação</p>
                 <div className="d-flex flex-column flex-md-row gap-3 justify-content-center">
                   <button
-                    className="btn btn-success btn-modern d-flex align-items-center justify-content-center gap-2 px-5 py-3"
+                    className="btn btn-primary btn-modern d-flex align-items-center justify-content-center gap-2 px-5 py-3 shadow-sm"
                     onClick={() => setAcaoSelecionada("emprestimo")}
                   >
                     <HandThumbsUp size={20} />
                     <span>Fazer Empréstimo</span>
                   </button>
                   <button
-                    className="btn btn-primary btn-modern d-flex align-items-center justify-content-center gap-2 px-5 py-3"
+                    className="btn btn-outline-primary btn-modern d-flex align-items-center justify-content-center gap-2 px-5 py-3 bg-white"
                     onClick={() => setAcaoSelecionada("devolucao")}
                   >
                     <ArrowCounterclockwise size={20} />

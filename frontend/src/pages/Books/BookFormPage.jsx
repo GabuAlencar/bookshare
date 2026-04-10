@@ -115,8 +115,8 @@ export default function BookFormPage() {
               <div className="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
                 <Journal size={40} className="text-primary" />
               </div>
-              <h2 className="fw-bold text-primary mb-2">{isEditing ? "Editar Livro" : "Cadastro de Livro"}</h2>
-              <p className="text-muted">{isEditing ? "Atualize os dados do livro" : "Preencha os dados do livro"}</p>
+              <h2 className="fw-bold text-dark mb-2">{isEditing ? "Editar Livro" : "Cadastro de Livro"}</h2>
+              <p className="text-secondary">{isEditing ? "Atualize os dados do livro" : "Preencha os dados do livro"}</p>
             </div>
 
             {isLoading ? (

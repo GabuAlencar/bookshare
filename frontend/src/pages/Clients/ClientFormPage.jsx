@@ -58,11 +58,11 @@ export default function ClientFormPage() {
         <div className="col-12 col-lg-8">
           <div className="glass-card p-4 p-md-5">
             <div className="text-center mb-4">
-              <div className="bg-success bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
-                <People size={40} className="text-success" />
+              <div className="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                <People size={40} className="text-primary" />
               </div>
-              <h2 className="fw-bold text-success mb-2">Cadastro de Cliente</h2>
-              <p className="text-muted">Preencha os dados do cliente</p>
+              <h2 className="fw-bold text-dark mb-2">Cadastro de Cliente</h2>
+              <p className="text-secondary">Preencha os dados do cliente</p>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -165,7 +165,7 @@ export default function ClientFormPage() {
 
               <button
                 type="submit"
-                className="btn btn-success w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mt-4"
+                className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mt-4"
               >
                 <Save size={18} />
                 <span>Cadastrar Cliente</span>

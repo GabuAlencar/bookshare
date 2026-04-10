@@ -23,7 +23,7 @@ export default function RecordsPage() {
       description: "Visualize todos os clientes cadastrados",
       icon: People,
       link: "/historico",
-      color: "success",
+      color: "primary",
       count: "Ver clientes"
     }
   ];
@@ -32,13 +32,13 @@ export default function RecordsPage() {
     <Layout>
       <div className="fade-in">
         <div className="text-center mb-5">
-          <div className="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+          <div className="bg-white bg-opacity-75 rounded-circle p-3 d-inline-flex mb-3 shadow-sm">
             <Grid size={50} className="text-primary" />
           </div>
-          <h1 className="display-5 fw-bold text-white mb-3">
+          <h1 className="display-5 fw-bold text-dark mb-3">
             Lista de Cadastros
           </h1>
-          <p className="lead text-white-50">
+          <p className="lead text-secondary">
             Acesse os registros de livros e clientes
           </p>
         </div>
@@ -49,20 +49,16 @@ export default function RecordsPage() {
             return (
               <div key={index} className="col-12 col-md-6">
                 <Link to={record.link} className="text-decoration-none">
-                  <div className="glass-card p-5 h-100 text-center position-relative">
+                  <div className="glass-card p-5 h-100 text-center position-relative shadow-sm border-0 border-top border-primary border-3">
                     <div className={`bg-${record.color} bg-opacity-10 rounded-circle p-4 d-inline-flex mb-4`}>
                       <IconComponent size={50} className={`text-${record.color}`} />
                     </div>
-                    <h3 className="fw-bold mb-3">{record.title}</h3>
-                    <p className="text-muted mb-4">{record.description}</p>
-                    <span className={`btn btn-${record.color} btn-modern d-inline-flex align-items-center gap-2`}>
+                    <h3 className="fw-bold text-dark mb-3">{record.title}</h3>
+                    <p className="text-secondary mb-4">{record.description}</p>
+                    <span className={`btn btn-${record.color} btn-modern d-inline-flex align-items-center gap-2 shadow-sm`}>
                       {record.count}
                       <ArrowRight size={18} />
                     </span>
-                    <div 
-                      className={`position-absolute top-0 end-0 bg-${record.color} bg-opacity-10`} 
-                      style={{ width: "120px", height: "120px", borderRadius: "0 20px 0 120px" }} 
-                    />
                   </div>
                 </Link>
               </div>

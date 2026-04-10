@@ -9,9 +9,22 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const validatePassword = (pwd) => {
+    if (pwd.length < 6) return "A senha deve ter no mínimo 6 caracteres.";
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(pwd))
+      return "A senha deve conter ao menos 1 caractere especial (ex: !@#$%).";
+    return null;
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
+
+    const pwdError = validatePassword(password);
+    if (pwdError) {
+      setError(pwdError);
+      return;
+    }
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/register", {
@@ -34,18 +47,17 @@ export default function RegisterPage() {
 
   return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-5">
-      <div className="glass-card p-5 w-100" style={{ maxWidth: "450px" }}>
+      <div className="glass-card p-5 w-100 border-0 shadow-lg" style={{ maxWidth: "450px" }}>
         <div className="text-center mb-4 fade-in">
-          <div className="mb-3">
-            <Book size={90} className="text-primary logo-pulse" />
+          <div className="mb-4">
+            <img src="/logo.png" alt="BookShare Logotipo" style={{ maxWidth: '100%', height: 'auto', maxHeight: '95px' }} className="d-block mx-auto mb-2" onError={(e) => { e.target.onerror = null; e.target.outerHTML = '<h1 class="fw-bold text-dark mb-2">BookShare</h1>'; }} />
           </div>
-          <h1 className="fw-bold text-primary mb-2">BookShare</h1>
-          <p className="text-muted">Crie sua conta</p>
+          <p className="text-secondary">Cadastro de Novo Usuário</p>
         </div>
 
         <form onSubmit={handleRegister} className="fade-in">
           <div className="mb-3 position-relative">
-            <label className="form-label fw-semibold">Nome Completo</label>
+            <label className="form-label fw-semibold text-secondary small text-uppercase">Nome Completo</label>
             <div className="position-relative">
               <input
                 type="text"
@@ -55,12 +67,12 @@ export default function RegisterPage() {
                 onChange={(e) => setName(e.target.value)}
                 required
               />
-              <Person className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+              <Person className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
             </div>
           </div>
 
           <div className="mb-3 position-relative">
-            <label className="form-label fw-semibold">E-mail</label>
+            <label className="form-label fw-semibold text-secondary small text-uppercase">E-mail Corporativo</label>
             <div className="position-relative">
               <input
                 type="email"
@@ -70,12 +82,12 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
             </div>
           </div>
 
           <div className="mb-4 position-relative">
-            <label className="form-label fw-semibold">Senha</label>
+            <label className="form-label fw-semibold text-secondary small text-uppercase">Senha de Acesso</label>
             <div className="position-relative">
               <input
                 type="password"
@@ -85,31 +97,34 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <KeyFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+              <KeyFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
             </div>
+            <small className="text-muted mt-1 d-block" style={{ fontSize: "0.78rem" }}>
+              Mínimo 6 caracteres e ao menos 1 caractere especial (ex: !@#$%)
+            </small>
           </div>
 
           {error && (
-            <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">
-              <span>{error}</span>
+            <div className="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+              <span className="small fw-semibold">{error}</span>
             </div>
           )}
 
           <button
             type="submit"
-            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3"
+            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3 shadow-sm"
           >
-            <span>Criar conta</span>
+            <span>Cadastrar Usuário</span>
             <ArrowRight size={18} />
           </button>
 
-          <div className="text-center">
+          <div className="text-center border-top pt-3 mt-2">
             <Link 
               to="/" 
-              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2"
+              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2 small"
             >
               <ArrowLeft size={16} />
-              <span>Já tem uma conta? Entrar</span>
+              <span>Já possui acesso? Entrar</span>
             </Link>
           </div>
         </form>

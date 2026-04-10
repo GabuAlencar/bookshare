@@ -25,21 +25,21 @@ export default function HomePage() {
       description: "Registre novos clientes",
       icon: People,
       link: "/cadastro-cliente",
-      color: "success"
+      color: "primary"
     },
     {
       title: "Empréstimos",
       description: "Gerencie empréstimos e devoluções",
       icon: JournalBookmark,
       link: "/emprestimo",
-      color: "info"
+      color: "primary"
     },
     {
       title: "Histórico",
       description: "Visualize todos os cadastros",
       icon: ClockHistory,
       link: "/historico",
-      color: "warning"
+      color: "primary"
     }
   ];
 
@@ -48,28 +48,27 @@ export default function HomePage() {
       <div className="fade-in">
         {name && (
           <div className="text-center mb-5">
-            <h1 className="display-4 fw-bold text-white mb-3">
-              Bem-vindo, <span className="text-warning">{name}</span>!
+            <h1 className="display-4 fw-bold text-dark mb-3">
+              Bem-vindo, <span className="text-primary disabled-color-override">{name}</span>!
             </h1>
-            <p className="lead text-white-50">
-              Gerencie sua biblioteca com facilidade
+            <p className="lead text-secondary">
+              Gerencie sua biblioteca com profissionalismo e eficiência.
             </p>
           </div>
         )}
 
         <div className="row g-4 mb-5">
           <div className="col-12">
-            <div className="glass-card p-4 text-center">
-              <h2 className="fw-bold text-primary mb-3">
-                <Journal className="me-2" size={32} />
-                Cadastre um livro
+            <div className="glass-card p-4 text-center border-0 shadow-sm border-top border-primary border-3">
+              <h2 className="fw-bold text-dark mb-3">
+                <Journal className="me-2 text-primary" size={32} />
+                Gestão de Acervo
               </h2>
-              <p className="text-muted mb-4 fs-5">
-                Organize seu acervo com facilidade. Sem complicações. 
-                Gestão rápida e eficiente.
+              <p className="text-secondary mb-4 fs-5">
+                Organize seu acervo com facilidade. Sistema ágil e seguro. 
               </p>
               <p className="text-muted">
-                Encontre, registre e acompanhe cada título com precisão.
+                Encontre, adicione e gerencie cada título com precisão.
               </p>
             </div>
           </div>
@@ -77,7 +76,7 @@ export default function HomePage() {
 
         <div className="row g-4">
           <div className="col-12">
-            <h3 className="text-white fw-bold mb-4">
+            <h3 className="text-dark fw-bold mb-4 border-bottom pb-2">
               Ações Rápidas
             </h3>
           </div>
@@ -93,14 +92,12 @@ export default function HomePage() {
                     <div className={`bg-${action.color} bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3`}>
                       <IconComponent size={40} className={`text-${action.color}`} />
                     </div>
-                    <h5 className="fw-bold mb-2">{action.title}</h5>
-                    <p className="text-muted small mb-3">{action.description}</p>
+                    <h5 className="fw-bold text-dark mb-2">{action.title}</h5>
+                    <p className="text-secondary small mb-3">{action.description}</p>
                     <span className={`text-${action.color} fw-semibold d-inline-flex align-items-center gap-2`}>
                       Acessar
                       <ArrowRight size={16} />
                     </span>
-                    <div className={`position-absolute top-0 end-0 bg-${action.color} bg-opacity-10`} 
-                         style={{ width: "100px", height: "100px", borderRadius: "0 20px 0 100px" }} />
                   </div>
                 </Link>
               </div>

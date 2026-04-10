@@ -5,6 +5,14 @@ const { User } = require("../models/User");
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
+
+  if (!password || password.length < 6) {
+    return res.status(400).json({ error: "A senha deve ter no mínimo 6 caracteres." });
+  }
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(password)) {
+    return res.status(400).json({ error: "A senha deve conter ao menos 1 caractere especial (ex: !@#$%)." });
+  }
+
   const hash = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email, password: hash });
   res.status(201).json(user);

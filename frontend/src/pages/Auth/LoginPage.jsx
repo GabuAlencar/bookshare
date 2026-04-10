@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { EnvelopeFill, LockFill, Book, ArrowRight, KeyFill } from "react-bootstrap-icons";
+import { EnvelopeFill, LockFill, ArrowRight, KeyFill } from "react-bootstrap-icons";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -40,18 +40,17 @@ export default function LoginPage() {
 
   return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-5">
-      <div className="glass-card p-5 w-100" style={{ maxWidth: "450px" }}>
+      <div className="glass-card p-5 w-100 border-0 shadow-lg" style={{ maxWidth: "450px" }}>
         <div className="text-center mb-4 fade-in">
-          <div className="mb-3">
-            <Book size={90} className="text-primary logo-pulse" />
+          <div className="mb-4">
+            <img src="/logo.png" alt="BookShare Logotipo" style={{ maxWidth: '100%', height: 'auto', maxHeight: '95px' }} className="d-block mx-auto mb-2" onError={(e) => { e.target.onerror = null; e.target.outerHTML = '<h1 class="fw-bold text-dark mb-2">BookShare</h1>'; }} />
           </div>
-          <h1 className="fw-bold text-primary mb-2">BookShare</h1>
-          <p className="text-muted">Entre na sua conta</p>
+          <p className="text-secondary">Acesso ao Sistema de Gestão</p>
         </div>
 
         <form onSubmit={handleLogin} className="fade-in">
           <div className="mb-3 position-relative">
-            <label className="form-label fw-semibold">E-mail</label>
+            <label className="form-label fw-semibold text-secondary small text-uppercase">E-mail Corporativo</label>
             <div className="position-relative">
               <input
                 type="email"
@@ -61,12 +60,12 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
             </div>
           </div>
 
           <div className="mb-4 position-relative">
-            <label className="form-label fw-semibold">Senha</label>
+            <label className="form-label fw-semibold text-secondary small text-uppercase">Senha de Acesso</label>
             <div className="position-relative">
               <input
                 type="password"
@@ -76,39 +75,39 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <LockFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={20} />
+              <LockFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
             </div>
           </div>
 
           {error && (
-            <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">
-              <span>{error}</span>
+            <div className="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+              <span className="small fw-semibold">{error}</span>
             </div>
           )}
 
           <button
             type="submit"
-            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3"
+            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3 shadow-sm"
           >
-            <span>Entrar</span>
+            <span>Acessar Plataforma</span>
             <ArrowRight size={18} />
           </button>
 
           <div className="text-center mb-3">
             <Link 
               to="/forgot-password" 
-              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2"
+              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2 small"
             >
               <KeyFill size={16} />
-              <span>Esqueci minha senha</span>
+              <span>Recuperar credenciais</span>
             </Link>
           </div>
 
-          <div className="text-center">
-            <p className="text-muted mb-0">
-              Não tem uma conta?{" "}
+          <div className="text-center border-top pt-3 mt-2">
+            <p className="text-secondary small mb-0">
+              Não possui acesso?{" "}
               <Link to="/register" className="text-primary fw-bold text-decoration-none">
-                Cadastre-se
+                Solicite cadastro
               </Link>
             </p>
           </div>

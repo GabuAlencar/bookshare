@@ -46,17 +46,17 @@ export default function Navbar() {
       <div className="container-fluid">
         {showBack && (
           <button
-            className="btn btn-outline-secondary me-2 d-flex align-items-center"
+            className="btn btn-outline-secondary btn-sm me-2 d-flex align-items-center rounded-pill px-3"
             onClick={handleBackClick}
             aria-label={isEditingBook ? "Voltar para o histórico" : "Voltar para a página principal"}
           >
-            <ArrowLeft size={20} />
-            <span className="ms-2 d-none d-md-inline">Voltar</span>
+            <ArrowLeft size={16} />
+            <span className="ms-2 d-none d-md-inline fw-medium">Voltar</span>
           </button>
         )}
-        <Link className="navbar-brand d-flex align-items-center fw-bold text-primary" to="/home">
-          <Book className="me-2" size={28} />
-          <span className="fs-4">BookShare</span>
+        <Link className="navbar-brand d-flex align-items-center fw-bold text-dark" to="/home">
+           <img src="/logo.png" alt="BookShare Logotipo" style={{ height: '48px', width: 'auto' }} className="d-inline-block align-text-top" />
+           <span className="ms-2 fs-4 tracking-tight text-primary">BookShare</span>
         </Link>
         
         <button

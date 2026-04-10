@@ -1,82 +1,89 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "tailwindcss";
 
-/* Gradiente global moderno */
+/* Corporate and formal neutral background */
 body {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  background: #9A9AF5;
+  color: #333333;
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
 }
 
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Cards com glassmorphism */
+/* Professional Cards - crisp borders instead of glassmorphism */
 .glass-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  transition: all 0.3s ease;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e1e4e8;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-color: #ced4da;
 }
 
-/* Botões modernos com hover */
+/* Formal buttons */
 .btn-modern {
-  transition: all 0.3s ease;
-  border-radius: 12px;
-  font-weight: 600;
-  padding: 12px 24px;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
 }
 
 .btn-modern:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Inputs modernos */
+.btn-primary.btn-modern {
+  background-color: #003366;
+  border-color: #003366;
+}
+
+.btn-primary.btn-modern:hover {
+  background-color: #002244;
+  border-color: #002244;
+}
+
+/* Formal Inputs */
 .form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e0e0;
-  padding: 12px 16px;
-  transition: all 0.3s ease;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 10px 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fcfcfc;
 }
 
 .form-control-modern:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-  transform: scale(1.02);
+  border-color: #003366;
+  box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.15);
+  background-color: #ffffff;
 }
 
-/* Navbar moderno */
+/* Formal Navbar */
 .navbar-modern {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: #ffffff !important;
+  border-bottom: 1px solid #e1e4e8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   z-index: 1050;
 }
 
-/* Garantir que links do navbar fiquem visíveis sobre fundo claro */
+/* Ensure navbar links are visible and formal */
 .navbar-modern .nav-link {
-  color: #333 !important;
+  color: #495057 !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
 }
 
-/* Forçar exibição do colapso em desktop (caso alguma regra oculte) */
+.navbar-modern .nav-link:hover {
+  color: #003366 !important;
+}
+
+/* Force collapse on desktop */
 @media (min-width: 992px) {
   .navbar-collapse {
     display: flex !important;
@@ -84,30 +91,28 @@ body {
   }
 }
 
-/* Mobile menu overlay styles */
-
+/* Mobile menu overlay styles - corporate */
 .mobile-menu-overlay {
   position: fixed;
-  top: 56px; /* below navbar */
+  top: 56px;
   left: 0;
-  width: 320px; /* corner menu width */
+  width: 320px;
   height: calc(100vh - 56px);
   background: #ffffff;
   z-index: 1100;
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+  border-right: 1px solid #e1e4e8;
   transform: translateX(-110%);
   transition: transform 280ms ease;
-  border-radius: 0 0 8px 0;
   overflow: auto;
 }
 
 .mobile-menu-overlay.open {
   transform: translateX(0);
 }
-  
 
 .mobile-menu-overlay .mobile-close {
   position: absolute;
@@ -116,22 +121,22 @@ body {
 }
 
 .mobile-menu-overlay .nav-link {
-  font-size: 1.05rem;
-  padding: 0.9rem 0.5rem;
-  color: #333 !important;
+  font-size: 1rem;
+  padding: 0.8rem 0.5rem;
+  color: #495057 !important;
+  border-bottom: 1px solid #f1f3f5;
   align-items: center;
 }
 
 .mobile-menu-overlay .navbar-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
 }
 
 .mobile-logout {
-  border-radius: 12px;
-  padding: 12px 18px;
-  font-weight: 700;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 600;
   position: relative;
   display: flex;
   align-items: center;
@@ -147,11 +152,18 @@ body {
   margin: 0 auto;
 }
 
+/* Navbar Brand Icon */
+.navbar-brand svg {
+  height: 26px;
+  width: 26px;
+  color: #003366;
+}
 
-/* Ensure the desktop brand icon matches login (slightly larger) */
-.navbar-brand svg { height: 28px; width: 28px; }
+.navbar-brand span {
+  color: #003366;
+}
 
-/* Centered navbar links (desktop) */
+/* Centered navbar links */
 .navbar-center {
   position: absolute;
   left: 50%;
@@ -164,24 +176,26 @@ body {
 }
 
 .navbar-center .nav-link {
-  padding: 0.5rem 0.75rem;
-  color: #333 !important;
+  padding: 0.5rem 1rem;
 }
 
 @media (max-width: 991.98px) {
-  .navbar-center { display: none !important; }
+  .navbar-center {
+    display: none !important;
+  }
 }
 
-/* Animações suaves */
+/* Subtle transitions */
 .fade-in {
-  animation: fadeIn 0.5s ease-in;
+  animation: fadeIn 0.4s ease-in;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -199,151 +213,168 @@ body {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.08);
     opacity: 0.92;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
   }
 }
 
-/* Estilos para tabelas */
+/* Strict Corporate Tables */
 .table-hover-row:hover {
-  background-color: rgba(102, 126, 234, 0.1) !important;
-  transform: scale(1.01);
-  transition: all 0.2s ease;
+  background-color: #f8f9fa !important;
+  transition: background-color 0.2s ease;
 }
 
 .table thead th {
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid #003366;
   font-weight: 600;
+  color: #333333;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
 }
 
-/* Estilos para react-select */
+/* Formal react-select */
 .react-select-container .react-select__control {
-  border-radius: 12px;
-  border: 2px solid #e0e0e0;
-  padding: 4px;
-  transition: all 0.3s ease;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 2px;
+  background-color: #fcfcfc;
+  transition: all 0.2s ease;
 }
 
 .react-select-container .react-select__control:hover {
-  border-color: #667eea;
+  border-color: #a0a5aa;
 }
 
 .react-select-container .react-select__control--is-focused {
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  border-color: #003366;
+  box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.15);
+  background-color: #ffffff;
 }
 
 .react-select-container .react-select__menu {
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e4e8;
 }
 
-/* Badges modernos */
+/* Professional badges */
 .badge {
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 5px 10px;
+  border-radius: 4px;
   font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Animações de spin */
+/* Spin animations */
 @keyframes spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
-/* Linha de livro com atraso */
+/* Highlighted rows */
 .table-warning {
-  background-color: rgba(255, 193, 7, 0.3) !important;
+  background-color: #fff9e6 !important;
 }
 
 .table-warning:hover {
-  background-color: rgba(255, 193, 7, 0.4) !important;
+  background-color: #fff3cd !important;
 }
 
-/* Modal moderno */
+/* Corporate Modal */
 .modal-content {
-  border-radius: 20px;
-  border: none;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid #e1e4e8;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .modal-header {
-  border-bottom: 2px solid #e0e0e0;
-  border-radius: 20px 20px 0 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  border-bottom: 1px solid #e1e4e8;
+  border-radius: 8px 8px 0 0;
+  background: #f4f6f9;
+  color: #003366;
+  padding: 1rem 1.5rem;
 }
 
 .modal-header .btn-close {
-  filter: invert(1);
+  filter: none;
 }
 
 .modal-footer {
-  border-top: 2px solid #e0e0e0;
-  border-radius: 0 0 20px 20px;
+  border-top: 1px solid #e1e4e8;
+  border-radius: 0 0 8px 8px;
+  background-color: #fafbfc;
 }
 
-/* Modal responsivo para mobile */
+/* Mobile responsive modal */
 @media (max-width: 576px) {
   .modal-dialog {
     margin: 0.5rem;
   }
-  
+
   .modal-content {
-    border-radius: 15px;
+    border-radius: 6px;
   }
-  
+
   .modal-header {
-    border-radius: 15px 15px 0 0;
+    border-radius: 6px 6px 0 0;
     padding: 1rem;
   }
-  
+
   .modal-header .modal-title {
     font-size: 1rem;
+    font-weight: 600;
   }
-  
+
   .modal-header .modal-title svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
-  
+
   .modal-body {
     padding: 1rem;
     font-size: 0.9rem;
   }
-  
+
   .modal-body h6 {
     font-size: 1rem;
+    color: #333333;
   }
-  
+
   .modal-footer {
-    border-radius: 0 0 15px 15px;
+    border-radius: 0 0 6px 6px;
     padding: 0.75rem;
   }
-  
+
   .modal-body p {
     font-size: 0.875rem;
     line-height: 1.5;
+    color: #495057;
   }
-  
+
   .modal-body .table {
     font-size: 0.8rem;
   }
-  
+
   .modal-body .table th,
   .modal-body .table td {
     padding: 0.5rem 0.25rem;
   }
-  
+
   .modal-body .badge {
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
@@ -373,15 +404,19 @@ body {
 /* Classe para manter scrollbar sempre visível */
 .table-responsive.keep-scrollbar {
   overflow-x: scroll !important;
-  -ms-overflow-style: scrollbar !important; /* IE e Edge */
-  scrollbar-width: thin !important; /* Firefox */
+  -ms-overflow-style: scrollbar !important;
+  /* IE e Edge */
+  scrollbar-width: thin !important;
+  /* Firefox */
 }
 
 /* Sempre mostrar barra de rolagem quando mouse estiver sobre o card que contém a tabela */
 .glass-card:hover .table-responsive {
   overflow-x: scroll !important;
-  -ms-overflow-style: scrollbar !important; /* IE e Edge */
-  scrollbar-width: thin !important; /* Firefox */
+  -ms-overflow-style: scrollbar !important;
+  /* IE e Edge */
+  scrollbar-width: thin !important;
+  /* Firefox */
 }
 
 /* Manter scrollbar visível também quando hover na própria área de scroll */
