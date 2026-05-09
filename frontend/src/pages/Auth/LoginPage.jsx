@@ -44,6 +44,7 @@ export default function LoginPage() {
         <div className="text-center mb-4 fade-in">
           <div className="mb-4">
             <img src="/logo.png" alt="BookShare Logotipo" style={{ maxWidth: '100%', height: 'auto', maxHeight: '95px' }} className="d-block mx-auto mb-2" onError={(e) => { e.target.onerror = null; e.target.outerHTML = '<h1 class="fw-bold text-dark mb-2">BookShare</h1>'; }} />
+            <h2 className="fw-bold text-dark fs-4 mt-2 mb-0">Bookshare</h2>
           </div>
           <p className="text-secondary">Acesso ao Sistema de Gestão</p>
         </div>

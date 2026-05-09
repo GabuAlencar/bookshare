@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagrama ER — BookShare</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .diagram-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .diagram-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 40px;
+      font-weight: 400;
+    }
+
+    .canvas {
+      position: relative;
+      width: 1300px;
+      height: 780px;
+    }
+
+    /* SVG for relationship lines */
+    .canvas svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Tables */
+    .er-table {
+      position: absolute;
+      background: #fff;
+      border: 2px solid #1e3a5f;
+      border-radius: 6px;
+      min-width: 260px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .er-table-header {
+      background: linear-gradient(135deg, #1e3a5f, #16325c);
+      color: #ffffff;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .er-table-body {
+      padding: 0;
+    }
+
+    .er-row {
+      display: flex;
+      align-items: center;
+      padding: 5px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 12.5px;
+      color: #374151;
+      gap: 8px;
+    }
+
+    .er-row:last-child {
+      border-bottom: none;
+    }
+
+    .er-row:hover {
+      background: #f9fafb;
+    }
+
+    .er-badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .badge-pk {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .badge-fk {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+    }
+
+    .badge-nn {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .badge-uq {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+
+    .er-col-name {
+      font-weight: 600;
+      color: #1f2937;
+      min-width: 130px;
+    }
+
+    .er-col-type {
+      color: #6b7280;
+      font-size: 11.5px;
+      font-style: italic;
+      flex-grow: 1;
+    }
+
+    .er-col-default {
+      color: #9ca3af;
+      font-size: 10.5px;
+    }
+
+    /* Table positions */
+    .table-clients  { top: 40px;  left: 0; }
+    .table-borrows  { top: 40px;  left: 440px; }
+    .table-books    { top: 40px;  left: 960px; }
+    .table-users    { top: 530px; left: 440px; }
+
+    /* Relationship labels */
+    .rel-label {
+      position: absolute;
+      font-size: 11px;
+      font-weight: 600;
+      color: #1e3a5f;
+      background: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      z-index: 2;
+    }
+
+    /* Legend */
+    .legend {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 16px 24px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: #475569;
+    }
+
+    /* Crow's foot markers */
+    .crow-one {
+      stroke: #1e3a5f;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .crow-many {
+      stroke: #1e3a5f;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .note {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #94a3b8;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    @media print {
+      body { padding: 10px; }
+      .canvas { transform: scale(0.85); transform-origin: top center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="diagram-title">Diagrama Entidade-Relacionamento — BookShare</div>
+  <div class="diagram-subtitle">Sistema de Gerenciamento de Biblioteca • PostgreSQL / Sequelize ORM</div>
+
+  <div class="canvas">
+    <!-- SVG Relationship Lines -->
+    <svg viewBox="0 0 1300 780" xmlns="http://www.w3.org/2000/svg">
+      <!-- Line: borrows.id_usuario → clients.id -->
+      <!-- clients table right edge ~265, row 3 (id_usuario) y≈130 | borrows table left edge 440, row 3 y≈130 -->
+      <path d="M 265,100 L 435,130" stroke="#1e3a5f" stroke-width="2" fill="none" />
+      <!-- Crow's foot at borrows side (many) -->
+      <line x1="435" y1="130" x2="418" y2="118" stroke="#1e3a5f" stroke-width="2" />
+      <line x1="435" y1="130" x2="418" y2="142" stroke="#1e3a5f" stroke-width="2" />
+      <!-- One marker at clients side -->
+      <line x1="270" y1="93" x2="270" y2="107" stroke="#1e3a5f" stroke-width="2.5" />
+
+      <!-- Line: borrows.id_livro → books.id -->
+      <!-- borrows table right edge ~700, row 2 (id_livro) y≈105 | books table left edge 960, row 1 y≈100 -->
+      <path d="M 705,105 L 955,100" stroke="#1e3a5f" stroke-width="2" fill="none" />
+      <!-- Crow's foot at borrows side (many) -->
+      <line x1="705" y1="105" x2="722" y2="93" stroke="#1e3a5f" stroke-width="2" />
+      <line x1="705" y1="105" x2="722" y2="117" stroke="#1e3a5f" stroke-width="2" />
+      <!-- One marker at books side -->
+      <line x1="950" y1="93" x2="950" y2="107" stroke="#1e3a5f" stroke-width="2.5" />
+    </svg>
+
+    <!-- Relationship labels (centered in the gaps between tables) -->
+    <div class="rel-label" style="top: 100px; left: 340px;">N : 1</div>
+    <div class="rel-label" style="top: 86px; left: 820px;">N : 1</div>
+
+    <!-- ═══════ TABLE: clients ═══════ -->
+    <div class="er-table table-clients">
+      <div class="er-table-header">📋 clients</div>
+      <div class="er-table-body">
+        <div class="er-row">
+          <span class="er-badge badge-pk">PK</span>
+          <span class="er-col-name">id</span>
+          <span class="er-col-type">INTEGER</span>
+          <span class="er-col-default">AUTO_INCREMENT</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">name</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">email</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">phone</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">cpf</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">address</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">createdAt</span>
+          <span class="er-col-type">TIMESTAMP</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">updatedAt</span>
+          <span class="er-col-type">TIMESTAMP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ TABLE: borrows ═══════ -->
+    <div class="er-table table-borrows">
+      <div class="er-table-header">🔄 borrows</div>
+      <div class="er-table-body">
+        <div class="er-row">
+          <span class="er-badge badge-pk">PK</span>
+          <span class="er-col-name">id_emprestimo</span>
+          <span class="er-col-type">INTEGER</span>
+          <span class="er-col-default">AUTO_INCREMENT</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-fk">FK</span>
+          <span class="er-col-name">id_livro</span>
+          <span class="er-col-type">INTEGER</span>
+          <span class="er-col-default">→ books.id</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-fk">FK</span>
+          <span class="er-col-name">id_usuario</span>
+          <span class="er-col-type">INTEGER</span>
+          <span class="er-col-default">→ clients.id</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">data_solicitacao</span>
+          <span class="er-col-type">DATE</span>
+          <span class="er-col-default">DEFAULT NOW</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">data_aprovacao</span>
+          <span class="er-col-type">DATE</span>
+          <span class="er-col-default">NULLABLE</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">data_prevista_devolucao</span>
+          <span class="er-col-type">DATE</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">status</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+          <span class="er-col-default">DEFAULT 'pendente'</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ TABLE: books ═══════ -->
+    <div class="er-table table-books">
+      <div class="er-table-header">📚 books</div>
+      <div class="er-table-body">
+        <div class="er-row">
+          <span class="er-badge badge-pk">PK</span>
+          <span class="er-col-name">id</span>
+          <span class="er-col-type">INTEGER</span>
+          <span class="er-col-default">AUTO_INCREMENT</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">title</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">author</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">year</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">category</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">description</span>
+          <span class="er-col-type">TEXT</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">status</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+          <span class="er-col-default">DEFAULT 'pendente'</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">createdAt</span>
+          <span class="er-col-type">TIMESTAMP</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">updatedAt</span>
+          <span class="er-col-type">TIMESTAMP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ TABLE: users ═══════ -->
+    <div class="er-table table-users">
+      <div class="er-table-header">👤 users</div>
+      <div class="er-table-body">
+        <div class="er-row">
+          <span class="er-badge badge-pk">PK</span>
+          <span class="er-col-name">id</span>
+          <span class="er-col-type">INTEGER</span>
+          <span class="er-col-default">AUTO_INCREMENT</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">name</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-uq">UQ</span>
+          <span class="er-col-name">email</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+          <span class="er-col-default">UNIQUE</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge badge-nn">NN</span>
+          <span class="er-col-name">password</span>
+          <span class="er-col-type">VARCHAR(255)</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">createdAt</span>
+          <span class="er-col-type">TIMESTAMP</span>
+        </div>
+        <div class="er-row">
+          <span class="er-badge" style="visibility:hidden">--</span>
+          <span class="er-col-name">updatedAt</span>
+          <span class="er-col-type">TIMESTAMP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><span class="er-badge badge-pk">PK</span> Chave Primária</div>
+    <div class="legend-item"><span class="er-badge badge-fk">FK</span> Chave Estrangeira</div>
+    <div class="legend-item"><span class="er-badge badge-nn">NN</span> Not Null</div>
+    <div class="legend-item"><span class="er-badge badge-uq">UQ</span> Unique</div>
+    <div class="legend-item">
+      <svg width="40" height="16" viewBox="0 0 40 16">
+        <line x1="0" y1="8" x2="30" y2="8" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="20" y1="2" x2="30" y2="8" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="20" y1="14" x2="30" y2="8" stroke="#1e3a5f" stroke-width="2"/>
+      </svg>
+      Relacionamento N:1
+    </div>
+  </div>
+
+  <p class="note">
+    A tabela <strong>borrows</strong> é a entidade associativa que relaciona <strong>clients</strong> (clientes) e <strong>books</strong> (livros).<br>
+    A tabela <strong>users</strong> armazena os operadores/administradores do sistema (autenticação).
+    <br><br>
+    <em>Banco de dados: PostgreSQL • ORM: Sequelize • Diagrama gerado a partir do código-fonte do BookShare.</em>
+  </p>
+
+</body>
+</html>

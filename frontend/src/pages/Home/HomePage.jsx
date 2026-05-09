@@ -51,7 +51,7 @@ export default function HomePage() {
             <h1 className="display-4 fw-bold text-dark mb-3">
               Bem-vindo, <span className="text-primary disabled-color-override">{name}</span>!
             </h1>
-            <p className="lead text-secondary">
+            <p className="lead" style={{ color: '#000000' }}>
               Gerencie sua biblioteca com profissionalismo e eficiência.
             </p>
           </div>

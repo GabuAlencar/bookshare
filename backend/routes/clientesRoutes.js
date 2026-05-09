@@ -98,6 +98,15 @@ router.delete('/clients/:id', async (req, res) => {
       return res.status(400).json({ error: 'Não é possível excluir um cliente que possui livros emprestados' });
     }
 
+    // Excluir todos os empréstimos finalizados (devolvidos) do cliente
+    // para evitar violação de chave estrangeira no banco de dados
+    await Borrow.destroy({
+      where: {
+        id_usuario: id,
+        status: 'devolvido',
+      },
+    });
+
     // Excluir o cliente
     await client.destroy();
     

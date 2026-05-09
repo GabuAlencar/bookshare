@@ -1,7 +1,7 @@
 import Layout from "../../components/Layout";
-import { 
-  Journal, 
-  Heart, 
+import {
+  Journal,
+  Heart,
   Code,
   People,
   Lightbulb,
@@ -36,9 +36,6 @@ export default function AboutPage() {
     <Layout>
       <div className="fade-in">
         <div className="text-center mb-5">
-          <div className="bg-white bg-opacity-75 rounded-circle p-4 d-inline-flex mb-4 shadow-sm">
-            <Journal size={60} className="text-primary" />
-          </div>
           <h1 className="display-4 fw-bold text-dark mb-3">Sobre o BookShare</h1>
           <p className="lead text-secondary">
             Sistema corporativo de gestão de biblioteca
@@ -47,12 +44,11 @@ export default function AboutPage() {
 
         <div className="glass-card p-5 mb-5 text-center border-0 shadow-sm border-top border-primary border-3">
           <h2 className="fw-bold text-dark mb-4 d-flex justify-content-center align-items-center gap-2">
-            <Journal className="text-primary" size={32} />
             Bem-vindo ao BookShare
           </h2>
           <p className="fs-5 text-secondary mb-4">
-            O BookShare é uma plataforma robusta desenvolvida para facilitar 
-            a gestão de bibliotecas corporativas e institucionais. Com ele, você pode cadastrar livros, gerenciar clientes 
+            O BookShare é uma plataforma robusta desenvolvida para facilitar
+            a gestão de bibliotecas corporativas e institucionais. Com ele, você pode cadastrar livros, gerenciar clientes
             e controlar empréstimos de forma simples, eficiente e auditável.
           </p>
           <div className="text-secondary mb-4 border-top pt-3">
@@ -88,7 +84,7 @@ export default function AboutPage() {
         <div className="glass-card p-4 text-center">
           <h5 className="fw-bold text-dark mb-2">Versão 1.0</h5>
           <p className="text-secondary small mb-0">
-            &copy; {new Date().getFullYear()} BookShare - Plataforma de Gestão 
+            &copy; {new Date().getFullYear()} BookShare - Plataforma de Gestão
           </p>
         </div>
       </div>
