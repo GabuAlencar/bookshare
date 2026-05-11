@@ -1,8 +1,24 @@
 import Layout from "../../components/Layout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { 
+  Journal, 
+  FileText, 
+  Calendar, 
+  Tag, 
+  Type, 
+  Person,
+  CheckCircleFill,
+  XCircleFill,
+  Save
+} from "react-bootstrap-icons";
 
 export default function BookFormPage() {
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
+  const isEditing = !!editId;
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [year, setYear] = useState("");
@@ -10,6 +26,33 @@ export default function BookFormPage() {
   const [description, setDescription] = useState("");
   const [bookId, setBookId] = useState(null);
   const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Carregar dados do livro se estiver editando
+  useEffect(() => {
+    if (editId) {
+      setIsLoading(true);
+      axios.get(`http://localhost:5000/books`)
+        .then(res => {
+          const book = res.data.find(b => b.id === parseInt(editId));
+          if (book) {
+            setTitle(book.title || "");
+            setAuthor(book.author || "");
+            setYear(book.year || "");
+            setCategory(book.category || "");
+            setDescription(book.description || "");
+            setBookId(book.id);
+          }
+        })
+        .catch(err => {
+          console.error("Erro ao carregar livro:", err);
+          setMessage("Erro ao carregar dados do livro.");
+          setIsSuccess(false);
+        })
+        .finally(() => setIsLoading(false));
+    }
+  }, [editId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,127 +61,204 @@ export default function BookFormPage() {
     const parsedYear = parseInt(year, 10);
 
     if (!parsedYear || parsedYear < 1000 || parsedYear > currentYear) {
-      setMessage(`❌ Ano inválido. Informe um valor entre 1000 e ${currentYear}.`);
+      setMessage(`Ano inválido. Informe um valor entre 1000 e ${currentYear}.`);
+      setIsSuccess(false);
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/books", {
-        title,
-        author,
-        year,
-        category,
-        description,
-      });
+      if (isEditing && editId) {
+        // Atualizar livro existente
+        await axios.put(`http://localhost:5000/books/${editId}`, {
+          title,
+          author,
+          year,
+          category,
+          description,
+        });
 
-      setBookId(response.data.id);
-      setMessage("✅ Livro cadastrado com sucesso!");
+        setMessage("Livro atualizado com sucesso!");
+        setIsSuccess(true);
+      } else {
+        // Criar novo livro
+        const response = await axios.post("http://localhost:5000/books", {
+          title,
+          author,
+          year,
+          category,
+          description,
+        });
 
-      setTitle("");
-      setAuthor("");
-      setYear("");
-      setCategory("");
-      setDescription("");
+        setBookId(response.data.id);
+        setMessage("Livro cadastrado com sucesso!");
+        setIsSuccess(true);
+
+        setTitle("");
+        setAuthor("");
+        setYear("");
+        setCategory("");
+        setDescription("");
+      }
     } catch (err) {
-      setMessage("❌ Erro ao cadastrar livro.");
+      setMessage(isEditing ? "Erro ao atualizar livro." : "Erro ao cadastrar livro.");
+      setIsSuccess(false);
       console.error(err);
     }
   };
 
   return (
     <Layout>
-      <div className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-md space-y-6 mt-8 border border-gray-200">
-        <h2 className="text-3xl font-bold text-blue-900 text-center mb-4">Cadastro de Livro</h2>
+      <div className="row justify-content-center fade-in">
+        <div className="col-12 col-lg-8">
+          <div className="glass-card p-4 p-md-5">
+            <div className="text-center mb-4">
+              <div className="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                <Journal size={40} className="text-primary" />
+              </div>
+              <h2 className="fw-bold text-dark mb-2">{isEditing ? "Editar Livro" : "Cadastro de Livro"}</h2>
+              <p className="text-secondary">{isEditing ? "Atualize os dados do livro" : "Preencha os dados do livro"}</p>
+            </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-1">Código do Livro</label>
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
-              value={bookId ? `#${String(bookId).padStart(6, "0")}` : "Aguardando cadastro..."}
-              disabled
-            />
+            {isLoading ? (
+              <div className="text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Carregando...</span>
+                </div>
+                <p className="mt-3 text-muted">Carregando dados do livro...</p>
+              </div>
+            ) : (
+            <form onSubmit={handleSubmit}>
+              {isEditing && (
+                <div className="mb-3">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                    <FileText size={18} />
+                    Código do Livro
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-modern bg-light"
+                    value={bookId ? `#${String(bookId).padStart(6, "0")}` : ""}
+                    disabled
+                  />
+                </div>
+              )}
+              {!isEditing && (
+                <div className="mb-3">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                    <FileText size={18} />
+                    Código do Livro
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-modern bg-light"
+                    value={bookId ? `#${String(bookId).padStart(6, "0")}` : "Aguardando cadastro..."}
+                    disabled
+                  />
+                </div>
+              )}
+
+              <div className="row g-3">
+                <div className="col-12 col-md-6">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                    <Type size={18} />
+                    Título
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-modern"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Ex: Dom Casmurro"
+                    required
+                  />
+                </div>
+
+                <div className="col-12 col-md-6">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                    <Person size={18} />
+                    Autor
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-modern"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    placeholder="Ex: Machado de Assis"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="row g-3 mt-0">
+                <div className="col-12 col-md-6">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                    <Calendar size={18} />
+                    Ano de Publicação
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control form-control-modern"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    placeholder="Ex: 1899"
+                    required
+                  />
+                </div>
+
+                <div className="col-12 col-md-6">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                    <Tag size={18} />
+                    Categoria
+                  </label>
+                  <select
+                    className="form-select form-control-modern"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    required
+                  >
+                    <option value="">Selecione uma categoria</option>
+                    <option value="Realismo">Realismo</option>
+                    <option value="Ficção Científica">Ficção Científica</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Fantasia">Fantasia</option>
+                    <option value="Suspense">Suspense</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mb-4 mt-3">
+                <label className="form-label fw-semibold d-flex align-items-center gap-2">
+                  <FileText size={18} />
+                  Descrição
+                </label>
+                <textarea
+                  className="form-control form-control-modern"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  placeholder="Escreva uma breve descrição do livro..."
+                  required
+                />
+              </div>
+
+              {message && (
+                <div className={`alert ${isSuccess ? 'alert-success' : 'alert-danger'} d-flex align-items-center gap-2 mb-4`}>
+                  {isSuccess ? <CheckCircleFill size={20} /> : <XCircleFill size={20} />}
+                  <span>{message}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2"
+              >
+                <Save size={18} />
+                <span>{isEditing ? "Atualizar Livro" : "Cadastrar Livro"}</span>
+              </button>
+            </form>
+            )}
           </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-1">Título</label>
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2 text-lg"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ex: Dom Casmurro"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-1">Autor</label>
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2 text-lg"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              placeholder="Ex: Machado de Assis"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-1">Ano de Publicação</label>
-            <input
-              type="number"
-              className="w-full border rounded px-3 py-2 text-lg"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              placeholder="Ex: 1899"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-1">Categoria</label>
-            <select
-              className="w-full border rounded px-3 py-2 text-lg"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="">Selecione uma categoria</option>
-              <option value="Realismo">Realismo</option>
-              <option value="Ficção Científica">Ficção Científica</option>
-              <option value="Romance">Romance</option>
-              <option value="Fantasia">Fantasia</option>
-              <option value="Suspense">Suspense</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-1">Descrição</label>
-            <textarea
-              className="w-full border rounded px-3 py-2 text-lg"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              placeholder="Escreva uma breve descrição do livro..."
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-900 hover:bg-blue-700 text-white py-3 text-lg font-semibold rounded transition"
-          >
-            Cadastrar Livro
-          </button>
-        </form>
-
-        {message && (
-          <p className={`text-center text-lg font-medium ${message.includes("sucesso") ? "text-green-600" : "text-red-600"}`}>
-            {message}
-          </p>
-        )}
+        </div>
       </div>
     </Layout>
   );

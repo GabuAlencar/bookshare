@@ -95,4 +95,34 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// ------------------------
+// Rota de redefinição de senha
+// ------------------------
+router.post("/reset-password", async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    return res
+      .status(400)
+      .json({ error: "E-mail e nova senha são obrigatórios." });
+  }
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado." });
+    }
+
+    const hash = await bcrypt.hash(newPassword, 10);
+    user.password = hash;
+    await user.save();
+
+    res.json({ message: "Senha atualizada com sucesso." });
+  } catch (error) {
+    console.error("Erro ao redefinir senha:", error);
+    res.status(500).json({ error: "Erro interno ao redefinir senha." });
+  }
+});
+
 module.exports = router;

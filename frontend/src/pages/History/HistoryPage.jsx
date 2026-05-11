@@ -1,16 +1,94 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
+import { 
+  Journal, 
+  People, 
+  Calendar,
+  ChevronDown,
+  FileText,
+  Eye,
+  CheckCircleFill,
+  XCircleFill,
+  ClockFill,
+  TrashFill,
+  PencilFill
+} from "react-bootstrap-icons";
 
 export default function HistoryPage() {
+  const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [clients, setClients] = useState([]);
-  const [expandedDescriptions, setExpandedDescriptions] = useState({});
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [borrowHistory, setBorrowHistory] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [deleteType, setDeleteType] = useState(null); // 'book' ou 'client'
+  const [activeTab, setActiveTab] = useState(() => {
+    // Carrega do localStorage ou usa 'clientes' como padrão
+    return localStorage.getItem('historyActiveTab') || 'clientes';
+  });
+
+  // Salva a aba ativa no localStorage quando muda
+  useEffect(() => {
+    localStorage.setItem('historyActiveTab', activeTab);
+  }, [activeTab]);
+
+  // Manter barra de rolagem visível quando mouse estiver sobre as tabelas
+  useEffect(() => {
+    const handleTableAreaMouseEnter = (e) => {
+      const tableResponsive = e.currentTarget.closest('.glass-card')?.querySelector('.table-responsive');
+      if (tableResponsive) {
+        tableResponsive.classList.add('keep-scrollbar');
+        tableResponsive.style.overflowX = 'scroll';
+      }
+    };
+
+    const handleTableAreaMouseLeave = (e) => {
+      const glassCard = e.currentTarget.closest('.glass-card');
+      const tableResponsive = glassCard?.querySelector('.table-responsive');
+      
+      // Só remove se o mouse realmente saiu do card
+      if (tableResponsive && !glassCard.contains(e.relatedTarget)) {
+        tableResponsive.classList.remove('keep-scrollbar');
+        tableResponsive.style.overflowX = 'auto';
+      }
+    };
+
+    // Aguardar um pouco para garantir que os elementos foram renderizados
+    const timeoutId = setTimeout(() => {
+      const glassCards = document.querySelectorAll('.glass-card');
+      glassCards.forEach(card => {
+        const tableArea = card.querySelector('.table-responsive, .table, tbody, tr, td, th');
+        if (tableArea) {
+          card.addEventListener('mouseenter', handleTableAreaMouseEnter);
+          card.addEventListener('mouseleave', handleTableAreaMouseLeave);
+        }
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      const glassCards = document.querySelectorAll('.glass-card');
+      glassCards.forEach(card => {
+        card.removeEventListener('mouseenter', handleTableAreaMouseEnter);
+        card.removeEventListener('mouseleave', handleTableAreaMouseLeave);
+      });
+    };
+  }, [activeTab, books, clients]);
 
   useEffect(() => {
     fetch("http://localhost:5000/books")
       .then((res) => res.json())
-      .then((data) => setBooks(data))
-      .catch((err) => console.error("Erro ao buscar livros:", err));
+      .then((data) => {
+        // O backend já retorna o statusEmprestimo
+        setBooks(data);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar livros:", err);
+        setBooks([]);
+      });
   }, []);
 
   useEffect(() => {
@@ -20,116 +98,594 @@ export default function HistoryPage() {
       .catch((err) => console.error("Erro ao buscar clientes:", err));
   }, []);
 
-  const toggleDescription = (id) => {
-    setExpandedDescriptions((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+  const handleViewBook = async (book) => {
+    setSelectedBook(book);
+    try {
+      const res = await fetch(`http://localhost:5000/borrow/livro/${book.id}`);
+      const historico = await res.json();
+      setBorrowHistory(historico);
+      setShowModal(true);
+    } catch (err) {
+      console.error("Erro ao buscar histórico:", err);
+      setBorrowHistory([]);
+      setShowModal(true);
+    }
+  };
+
+  const getStatusBadge = (statusEmprestimo) => {
+    switch (statusEmprestimo) {
+      case 'disponivel':
+        return <span className="badge bg-success">Disponível</span>;
+      case 'emprestado':
+        return <span className="badge bg-info">Emprestado</span>;
+      case 'emprestado_atraso':
+        return <span className="badge bg-warning">Emprestado com atraso</span>;
+      default:
+        return <span className="badge bg-secondary">Desconhecido</span>;
+    }
+  };
+
+  const getRowClassName = (statusEmprestimo) => {
+    if (statusEmprestimo === 'emprestado_atraso') {
+      return 'table-warning';
+    }
+    return '';
+  };
+
+  const handleDeleteClick = (item, type) => {
+    setItemToDelete(item);
+    setDeleteType(type);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!itemToDelete || !deleteType) return;
+
+    try {
+      const url = deleteType === 'book' 
+        ? `http://localhost:5000/books/${itemToDelete.id}`
+        : `http://localhost:5000/clients/${itemToDelete.id}`;
+
+      const response = await fetch(url, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Atualizar a lista correspondente
+        if (deleteType === 'book') {
+          setBooks(books.filter(b => b.id !== itemToDelete.id));
+        } else {
+          setClients(clients.filter(c => c.id !== itemToDelete.id));
+        }
+        setShowDeleteModal(false);
+        setItemToDelete(null);
+        setDeleteType(null);
+      } else {
+        alert(data.error || 'Erro ao excluir item');
+      }
+    } catch (err) {
+      console.error("Erro ao excluir:", err);
+      alert('Erro ao excluir item. Tente novamente.');
+    }
   };
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto text-center">
-        <h1 className="text-3xl font-bold mb-6 text-blue-900">
-          Histórico de Cadastros
-        </h1>
-
-        {/* TABELA DE LIVROS */}
-        <h2 className="text-2xl font-semibold mb-4 text-left">Livros Cadastrados</h2>
-        <div className="overflow-x-auto rounded-lg shadow mb-12">
-          <table className="w-full table-auto border-collapse text-sm bg-white">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
-                <th className="border px-4 py-2">ID</th>
-                <th className="border px-4 py-2">Título</th>
-                <th className="border px-4 py-2">Autor</th>
-                <th className="border px-4 py-2">Ano</th>
-                <th className="border px-4 py-2">Categoria</th>
-                <th className="border px-4 py-2">Descrição</th>
-                <th className="border px-4 py-2">Data de Cadastro</th>
-              </tr>
-            </thead>
-            <tbody>
-              {books.length > 0 ? (
-                books.map((book) => (
-                  <tr key={book.id} className="hover:bg-gray-50">
-                    <td className="border px-4 py-2">{book.id}</td>
-                    <td className="border px-4 py-2">{book.title}</td>
-                    <td className="border px-4 py-2">{book.author}</td>
-                    <td className="border px-4 py-2">{book.year}</td>
-                    <td className="border px-4 py-2">{book.category}</td>
-                    <td className="border px-4 py-2 text-left max-w-xs">
-                      <p className="whitespace-pre-line break-words">
-                        {expandedDescriptions[book.id]
-                          ? book.description
-                          : book.description?.substring(0, 100) + (book.description?.length > 100 ? "..." : "")}
-                      </p>
-                      {book.description?.length > 100 && (
-                        <button
-                          onClick={() => toggleDescription(book.id)}
-                          className="text-blue-600 text-xs hover:underline mt-1"
-                        >
-                          {expandedDescriptions[book.id] ? "Mostrar menos" : "Ler mais"}
-                        </button>
-                      )}
-                    </td>
-                    <td className="border px-4 py-2">
-                      {new Date(book.createdAt).toLocaleDateString("pt-BR")}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="text-center py-4 text-gray-500">
-                    Nenhum livro encontrado.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      <div className="fade-in">
+        <div className="text-center mb-5">
+          <h1 className="display-5 fw-bold text-dark mb-3">
+            <FileText className="me-2 text-primary bg-white rounded-circle p-1 shadow-sm" size={48} />
+            Histórico de Cadastros
+          </h1>
+          <p className="lead text-secondary">Visualize todos os livros e clientes cadastrados</p>
         </div>
 
-        {/* TABELA DE CLIENTES */}
-        <h2 className="text-2xl font-semibold mb-4 text-left">Clientes Cadastrados</h2>
-        <div className="overflow-x-auto rounded-lg shadow">
-          <table className="w-full table-auto border-collapse text-sm bg-white">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
-                <th className="border px-4 py-2">ID</th>
-                <th className="border px-4 py-2">Nome</th>
-                <th className="border px-4 py-2">Email</th>
-                <th className="border px-4 py-2">Telefone</th>
-                <th className="border px-4 py-2">CPF</th>
-                <th className="border px-4 py-2">Endereço</th>
-                <th className="border px-4 py-2">Data de Cadastro</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clients.length > 0 ? (
-                clients.map((client) => (
-                  <tr key={client.id} className="hover:bg-gray-50">
-                    <td className="border px-4 py-2">{client.id}</td>
-                    <td className="border px-4 py-2">{client.name}</td>
-                    <td className="border px-4 py-2">{client.email}</td>
-                    <td className="border px-4 py-2">{client.phone}</td>
-                    <td className="border px-4 py-2">{client.cpf}</td>
-                    <td className="border px-4 py-2">{client.address}</td>
-                    <td className="border px-4 py-2">
-                      {new Date(client.createdAt).toLocaleDateString("pt-BR")}
+        {/* SEÇÃO UNIFICADA COM ABAS */}
+        <div className="glass-card p-4">
+          {/* Botões de Navegação */}
+          <div className="d-flex gap-3 mb-4 flex-wrap">
+            <button
+              className={`btn btn-modern d-flex align-items-center gap-2 ${
+                activeTab === 'livros' ? 'btn-primary' : 'btn-outline-primary'
+              }`}
+              onClick={() => setActiveTab('livros')}
+            >
+              <Journal size={20} />
+              <span>Livros</span>
+              <span className="badge bg-white text-primary ms-1">{books.length}</span>
+            </button>
+            <button
+              className={`btn btn-modern d-flex align-items-center gap-2 ${
+                activeTab === 'clientes' ? 'btn-success' : 'btn-outline-success'
+              }`}
+              onClick={() => setActiveTab('clientes')}
+            >
+              <People size={20} />
+              <span>Clientes</span>
+              <span className="badge bg-white text-success ms-1">{clients.length}</span>
+            </button>
+          </div>
+
+          {/* TABELA DE LIVROS */}
+          {activeTab === 'livros' && (
+            <>
+              <div className="d-flex align-items-center gap-2 mb-4">
+                <Journal className="text-primary" size={28} />
+                <h2 className="fw-bold text-primary mb-0">Livros Cadastrados</h2>
+                <span className="badge bg-primary ms-2">{books.length}</span>
+              </div>
+          
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead className="table-primary">
+                <tr>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Autor</th>
+                  <th>Ano</th>
+                  <th>Categoria</th>
+                  <th>Status</th>
+                  <th>Descrição</th>
+                  <th>Data de Cadastro</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {books.length > 0 ? (
+                  books.map((book) => (
+                    <tr key={book.id} className={getRowClassName(book.statusEmprestimo)}>
+                      <td><strong>#{book.id}</strong></td>
+                      <td className="text-truncate-cell" style={{ maxWidth: "200px", width: "200px" }}>
+                        <div style={{ 
+                          overflow: "hidden", 
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          maxWidth: "200px"
+                        }}>
+                          {book.title || "-"}
+                        </div>
+                        {book.title && book.title.length > 50 && (
+                          <button
+                            onClick={() => handleViewBook(book)}
+                            className="btn btn-sm btn-link text-primary p-0 mt-1 d-inline-flex align-items-center gap-1"
+                            style={{ fontSize: "0.875rem" }}
+                          >
+                            <ChevronDown size={14} />
+                            <span>Ler mais</span>
+                          </button>
+                        )}
+                      </td>
+                      <td className="text-truncate-cell" style={{ maxWidth: "200px", width: "200px" }}>
+                        <div style={{ 
+                          overflow: "hidden", 
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          maxWidth: "200px"
+                        }}>
+                          {book.author || "-"}
+                        </div>
+                        {book.author && book.author.length > 50 && (
+                          <button
+                            onClick={() => handleViewBook(book)}
+                            className="btn btn-sm btn-link text-primary p-0 mt-1 d-inline-flex align-items-center gap-1"
+                            style={{ fontSize: "0.875rem" }}
+                          >
+                            <ChevronDown size={14} />
+                            <span>Ler mais</span>
+                          </button>
+                        )}
+                      </td>
+                      <td>{book.year}</td>
+                      <td>
+                        <span className="badge bg-info">{book.category}</span>
+                      </td>
+                      <td>
+                        {getStatusBadge(book.statusEmprestimo)}
+                      </td>
+                      <td className="text-truncate-cell" style={{ maxWidth: "200px", width: "200px" }}>
+                        <div style={{ 
+                          overflow: "hidden", 
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          maxWidth: "200px"
+                        }}>
+                          {book.description || "-"}
+                        </div>
+                        {book.description && book.description.length > 50 && (
+                          <button
+                            onClick={() => handleViewBook(book)}
+                            className="btn btn-sm btn-link text-primary p-0 mt-1 d-inline-flex align-items-center gap-1"
+                            style={{ fontSize: "0.875rem" }}
+                          >
+                            <ChevronDown size={14} />
+                            <span>Ler mais</span>
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center gap-1">
+                          <Calendar size={14} className="text-muted" />
+                          <span>{new Date(book.createdAt).toLocaleDateString("pt-BR")}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex gap-2" style={{ flexWrap: "nowrap" }}>
+                          <button
+                            className="btn btn-sm btn-primary d-flex align-items-center gap-1"
+                            onClick={() => handleViewBook(book)}
+                          >
+                            <Eye size={16} />
+                            <span className="d-none d-md-inline">Visualizar</span>
+                          </button>
+                          <button
+                            className="btn btn-sm btn-danger d-flex align-items-center gap-1"
+                            onClick={() => handleDeleteClick(book, 'book')}
+                          >
+                            <TrashFill size={16} />
+                            <span className="d-none d-md-inline">Excluir</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="9" className="text-center py-5 text-muted">
+                      <Journal size={40} className="mb-2 opacity-50" />
+                      <p className="mb-0">Nenhum livro encontrado.</p>
                     </td>
                   </tr>
-                ))
-              ) : (
+                )}
+              </tbody>
+            </table>
+          </div>
+          </>
+          )}
+
+          {/* TABELA DE CLIENTES */}
+          {activeTab === 'clientes' && (
+            <>
+              <div className="d-flex align-items-center gap-2 mb-4">
+                <People className="text-success" size={28} />
+                <h2 className="fw-bold text-success mb-0">Clientes Cadastrados</h2>
+                <span className="badge bg-success ms-2">{clients.length}</span>
+              </div>
+          
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead className="table-success">
                 <tr>
-                  <td colSpan="7" className="text-center py-4 text-gray-500">
-                    Nenhum cliente encontrado.
-                  </td>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Telefone</th>
+                  <th>CPF</th>
+                  <th>Endereço</th>
+                  <th>Data de Cadastro</th>
+                  <th>Ações</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {clients.length > 0 ? (
+                  clients.map((client) => (
+                    <tr key={client.id} className="table-hover-row">
+                      <td><strong>#{client.id}</strong></td>
+                      <td>{client.name}</td>
+                      <td>{client.email}</td>
+                      <td>{client.phone}</td>
+                      <td>{client.cpf}</td>
+                      <td style={{ 
+                        maxWidth: "200px", 
+                        wordWrap: "break-word", 
+                        overflowWrap: "break-word",
+                        whiteSpace: "normal"
+                      }}>
+                        {client.address}
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center gap-1">
+                          <Calendar size={14} className="text-muted" />
+                          <span>{new Date(client.createdAt).toLocaleDateString("pt-BR")}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-sm btn-danger d-flex align-items-center gap-1"
+                          onClick={() => handleDeleteClick(client, 'client')}
+                        >
+                          <TrashFill size={16} />
+                          <span className="d-none d-md-inline">Excluir</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-5 text-muted">
+                      <People size={40} className="mb-2 opacity-50" />
+                      <p className="mb-0">Nenhum cliente encontrado.</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          </>
+          )}
         </div>
       </div>
+
+      {/* Modal de Detalhes do Livro */}
+      {showModal && selectedBook && (
+        <>
+          <div 
+            className="modal-backdrop fade show" 
+            onClick={() => setShowModal(false)}
+            style={{ zIndex: 1040 }}
+          ></div>
+          <div 
+            className="modal fade show d-block" 
+            tabIndex="-1" 
+            style={{ zIndex: 1050 }}
+          >
+            <div className="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-sm-down">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title fw-bold d-flex align-items-center gap-2 flex-wrap">
+                    <Journal className="text-white" size={24} />
+                    <span className="text-break">{selectedBook.title}</span>
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close btn-close-white"
+                    onClick={() => setShowModal(false)}
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div className="modal-body">
+                {/* Dados do Livro */}
+                <div className="mb-4">
+                  <h6 className="fw-bold mb-3 text-primary">Dados do Livro</h6>
+                  <div className="row g-3">
+                    <div className="col-12 col-md-6">
+                      <strong>ID:</strong> #{selectedBook.id}
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <strong>Status:</strong> {getStatusBadge(selectedBook.statusEmprestimo)}
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <strong>Título:</strong> <span className="text-break d-inline-block">{selectedBook.title}</span>
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <strong>Autor:</strong> <span className="text-break d-inline-block">{selectedBook.author}</span>
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <strong>Ano:</strong> {selectedBook.year}
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <strong>Categoria:</strong> <span className="badge bg-info">{selectedBook.category}</span>
+                    </div>
+                    <div className="col-12">
+                      <strong>Descrição:</strong>
+                      <p className="mt-2 text-break" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+                        {selectedBook.description || "Sem descrição disponível."}
+                      </p>
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <strong>Data de Cadastro:</strong>{" "}
+                      {new Date(selectedBook.createdAt).toLocaleDateString("pt-BR")}
+                    </div>
+                  </div>
+                </div>
+
+                <hr />
+
+                {/* Histórico de Empréstimos */}
+                <div>
+                  <h6 className="fw-bold mb-3 text-primary">Histórico de Empréstimos</h6>
+                  {borrowHistory.length > 0 ? (
+                    <div className="table-responsive">
+                      <table className="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Cliente</th>
+                            <th className="d-none d-md-table-cell">Data Solicitação</th>
+                            <th className="d-none d-lg-table-cell">Data Aprovação</th>
+                            <th>Data Prevista Devolução</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {borrowHistory.map((emprestimo) => {
+                            const hoje = new Date();
+                            hoje.setHours(0, 0, 0, 0);
+                            const dataDevolucao = emprestimo.data_prevista_devolucao 
+                              ? new Date(emprestimo.data_prevista_devolucao) 
+                              : null;
+                            const isAtrasado = emprestimo.status === 'pendente' && dataDevolucao && dataDevolucao < hoje;
+
+                            return (
+                              <tr key={emprestimo.id_emprestimo} className={isAtrasado ? 'table-warning' : ''}>
+                                <td style={{ minWidth: '120px' }}>
+                                  {emprestimo.cliente ? (
+                                    <div className="text-break">
+                                      <div className="fw-bold" style={{ wordBreak: 'break-word' }}>{emprestimo.cliente.nome}</div>
+                                      <small className="text-muted d-block" style={{ wordBreak: 'break-word' }}>{emprestimo.cliente.email}</small>
+                                    </div>
+                                  ) : (
+                                    <span className="text-muted">Cliente não encontrado</span>
+                                  )}
+                                </td>
+                                <td className="d-none d-md-table-cell" style={{ whiteSpace: 'nowrap' }}>
+                                  {emprestimo.data_solicitacao ? (
+                                    <div className="d-flex align-items-center gap-1">
+                                      <Calendar size={14} />
+                                      <span>{new Date(emprestimo.data_solicitacao).toLocaleDateString("pt-BR")}</span>
+                                    </div>
+                                  ) : (
+                                    <span className="text-muted">-</span>
+                                  )}
+                                </td>
+                                <td className="d-none d-lg-table-cell" style={{ whiteSpace: 'nowrap' }}>
+                                  {emprestimo.data_aprovacao ? (
+                                    <div className="d-flex align-items-center gap-1">
+                                      <Calendar size={14} />
+                                      <span>{new Date(emprestimo.data_aprovacao).toLocaleDateString("pt-BR")}</span>
+                                    </div>
+                                  ) : (
+                                    <span className="text-muted">-</span>
+                                  )}
+                                </td>
+                                <td style={{ whiteSpace: 'nowrap' }}>
+                                  {emprestimo.data_prevista_devolucao ? (
+                                    <div className="d-flex align-items-center gap-1 flex-wrap">
+                                      <Calendar size={14} />
+                                      <span>{new Date(emprestimo.data_prevista_devolucao).toLocaleDateString("pt-BR")}</span>
+                                      {isAtrasado && (
+                                        <ClockFill size={14} className="text-warning ms-1" />
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <span className="text-muted">-</span>
+                                  )}
+                                </td>
+                                <td style={{ whiteSpace: 'nowrap' }}>
+                                  {emprestimo.status === 'pendente' && isAtrasado ? (
+                                    <span className="badge bg-warning" style={{ fontSize: '0.75rem' }}>Emprestado com atraso</span>
+                                  ) : emprestimo.status === 'pendente' ? (
+                                    <span className="badge bg-info" style={{ fontSize: '0.75rem' }}>Emprestado</span>
+                                  ) : emprestimo.status === 'devolvido' ? (
+                                    <span className="badge bg-success" style={{ fontSize: '0.75rem' }}>
+                                      <CheckCircleFill size={12} className="me-1" />
+                                      Devolvido
+                                    </span>
+                                  ) : (
+                                    <span className="badge bg-secondary" style={{ fontSize: '0.75rem' }}>{emprestimo.status}</span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="alert alert-info d-flex align-items-center gap-2 flex-wrap">
+                      <Journal size={20} />
+                      <span>Nenhum empréstimo registrado para este livro.</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-primary d-flex align-items-center gap-2"
+                    onClick={() => {
+                      setShowModal(false);
+                      navigate(`/cadastro-livro?edit=${selectedBook.id}`);
+                    }}
+                  >
+                    <PencilFill size={18} />
+                    <span>Editar</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary w-100 w-md-auto"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Modal de Confirmação de Exclusão */}
+      {showDeleteModal && itemToDelete && (
+        <>
+          <div 
+            className="modal-backdrop fade show" 
+            onClick={() => {
+              setShowDeleteModal(false);
+              setItemToDelete(null);
+              setDeleteType(null);
+            }}
+            style={{ zIndex: 1040 }}
+          ></div>
+          <div 
+            className="modal fade show d-block" 
+            tabIndex="-1" 
+            style={{ zIndex: 1050 }}
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header bg-danger text-white">
+                  <h5 className="modal-title fw-bold d-flex align-items-center gap-2">
+                    <TrashFill size={24} />
+                    Confirmar Exclusão
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close btn-close-white"
+                    onClick={() => {
+                      setShowDeleteModal(false);
+                      setItemToDelete(null);
+                      setDeleteType(null);
+                    }}
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <p className="mb-3">
+                    Tem certeza que deseja excluir {deleteType === 'book' ? 'o livro' : 'o cliente'}{' '}
+                    <strong>
+                      {deleteType === 'book' 
+                        ? itemToDelete.title 
+                        : itemToDelete.name}
+                    </strong>?
+                  </p>
+                  {deleteType === 'book' && itemToDelete.statusEmprestimo !== 'disponivel' && (
+                    <div className="alert alert-warning d-flex align-items-center gap-2">
+                      <XCircleFill size={20} />
+                      <span>Este livro está emprestado e não pode ser excluído.</span>
+                    </div>
+                  )}
+                  <p className="text-muted small mb-0">
+                    Esta ação não pode ser desfeita.
+                  </p>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setShowDeleteModal(false);
+                      setItemToDelete(null);
+                      setDeleteType(null);
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger d-flex align-items-center gap-2"
+                    onClick={handleConfirmDelete}
+                    disabled={deleteType === 'book' && itemToDelete.statusEmprestimo !== 'disponivel'}
+                  >
+                    <TrashFill size={18} />
+                    <span>Excluir</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </Layout>
   );
 }

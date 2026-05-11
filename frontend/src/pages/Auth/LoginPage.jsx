@@ -1,7 +1,6 @@
-// src/pages/Login.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Mail, Lock } from "lucide-react"; // Instale lucide-react se necessário
+import { useNavigate, Link } from "react-router-dom";
+import { EnvelopeFill, LockFill, ArrowRight, KeyFill } from "react-bootstrap-icons";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -40,56 +39,79 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-sm bg-white p-8 rounded-xl shadow-md">
-        <div className="flex flex-col items-center mb-6">
-          <img src="/book-logo.svg" alt="Bookshare" className="w-20 mb-2" />
-          <h1 className="text-xl font-semibold text-gray-800">Bookshare</h1>
-          <p className="text-sm text-gray-500 mt-1">Entre na sua conta</p>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-5">
+      <div className="glass-card p-5 w-100 border-0 shadow-lg" style={{ maxWidth: "450px" }}>
+        <div className="text-center mb-4 fade-in">
+          <div className="mb-4">
+            <img src="/logo.png" alt="BookShare Logotipo" style={{ maxWidth: '100%', height: 'auto', maxHeight: '95px' }} className="d-block mx-auto mb-2" onError={(e) => { e.target.onerror = null; e.target.outerHTML = '<h1 class="fw-bold text-dark mb-2">BookShare</h1>'; }} />
+            <h2 className="fw-bold text-dark fs-4 mt-2 mb-0">Bookshare</h2>
+          </div>
+          <p className="text-secondary">Acesso ao Sistema de Gestão</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="relative">
-            <input
-              type="email"
-              placeholder="alex@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Mail className="absolute right-3 top-2.5 text-gray-400" size={20} />
+        <form onSubmit={handleLogin} className="fade-in">
+          <div className="mb-3 position-relative">
+            <label className="form-label fw-semibold text-secondary small text-uppercase">E-mail Corporativo</label>
+            <div className="position-relative">
+              <input
+                type="email"
+                className="form-control form-control-modern ps-5"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <EnvelopeFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
+            </div>
           </div>
 
-          <div className="relative">
-            <input
-              type="password"
-              placeholder="Entre com a sua senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Lock className="absolute right-3 top-2.5 text-gray-400" size={20} />
+          <div className="mb-4 position-relative">
+            <label className="form-label fw-semibold text-secondary small text-uppercase">Senha de Acesso</label>
+            <div className="position-relative">
+              <input
+                type="password"
+                className="form-control form-control-modern ps-5"
+                placeholder="Digite sua senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <LockFill className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
+            </div>
           </div>
 
-
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && (
+            <div className="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+              <span className="small fw-semibold">{error}</span>
+            </div>
+          )}
 
           <button
             type="submit"
-            className="w-full bg-blue-900 text-white py-2 rounded-md shadow-md hover:bg-blue-800 transition"
+            className="btn btn-primary w-100 btn-modern d-flex align-items-center justify-content-center gap-2 mb-3 shadow-sm"
           >
-            Entrar
+            <span>Acessar Plataforma</span>
+            <ArrowRight size={18} />
           </button>
 
-      {/*
-        <p className="text-sm text-center mt-4 text-gray-600"> 
-          Caso não tenha uma conta{" "} 
-          <a href="/register" className="text-blue-600 underline">
-            Registre-se
-          </a>
-        </p> 
-      */} 
+          <div className="text-center mb-3">
+            <Link 
+              to="/forgot-password" 
+              className="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-2 small"
+            >
+              <KeyFill size={16} />
+              <span>Recuperar credenciais</span>
+            </Link>
+          </div>
 
+          <div className="text-center border-top pt-3 mt-2">
+            <p className="text-secondary small mb-0">
+              Não possui acesso?{" "}
+              <Link to="/register" className="text-primary fw-bold text-decoration-none">
+                Solicite cadastro
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>
